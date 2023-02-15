@@ -6,14 +6,21 @@ import {
 } from "@heroicons/react/24/outline";
 import SquarePen from "../../../assets/SquarePen.png";
 
-export default function OrderItems() {
+export default function OrderItems({ item, setTaskInfo }) {
   return (
     <>
-      <div className="w-full flex flex-col gap-2 border-[1px] border-solid border-[#BBB7A8] p-4 rounded-lg mb-4">
+      <div
+        className="w-full flex flex-col gap-2 border-[1px] border-solid border-[#BBB7A8] p-4 rounded-lg mb-4 cursor-pointer"
+        onClick={() => {
+          setTaskInfo("orderDetail");
+        }}
+      >
         <div className="w-full flex justify-between border-b-[1px] border-solid border-[#BBB7A8] pb-2">
           <div className="p-1 flex gap-1 text-[#26aa99] text-sm">
             <TruckIcon className="w-5 h-5" />
-            <p className="xsm:text-sm">Giao hang thanh cong</p>
+            <p className="xsm:text-sm">
+              {item.status == "pending" ? "Dang cho xac nhan" : ""}
+            </p>
           </div>
           <div className="p-1 cursor-pointer flex gap-1">
             <p className="text-sm font-medium">Edit</p>
@@ -31,18 +38,24 @@ export default function OrderItems() {
           <div className="w-[80%]">
             <div className="flex gap-1 items-center">
               <p className="font-medium text-sm">Ma don hang:</p>
-              <p className="text-sm">XX000999</p>
+              <p className="text-sm">{item.id.split("-")[0]}</p>
             </div>
-            <div className="flex gap-1">
+            <div className="flex flex-col gap-1">
               <p className="font-medium text-sm">Dia chi:</p>
-              <p className="text-sm">14 Khuê Mỹ Đông 10</p>
+              <p className="text-sm overflow-hidden w-[80%]">{item.address}</p>
             </div>
-            <p className="text-sm overflow-hidden w-full">
-              Phường Khuê Mỹ, Quận Ngũ Hành Sơn, Đà Nẵng
-            </p>
           </div>
         </div>
-        <div className="w-full flex justify-end items-center text-[#ee4d2d]">
+        <div className="w-full flex justify-between items-center text-[#ee4d2d]">
+          <div className="flex gap-1 justify-end items-center">
+            <CurrencyDollarIcon className="w-5 h-5 text-[#ee4d2d]" />
+            <div className="flex gap-1 items-center">
+              <p className="text-sm">Thanh tien:</p>
+              <p className="text-[#ee4d2d] text-xl xxsm:text-sm">
+                {item.total} $
+              </p>
+            </div>
+          </div>
           <div className="flex cursor-pointer gap-1">
             <div className="text-sm font-medium">Cancel</div>
             <TrashIcon className="w-5 h-5" />

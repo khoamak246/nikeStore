@@ -1,13 +1,22 @@
 import React from "react";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
-export default function OrderDetail() {
+export default function OrderDetail({ taskInfo, setTaskInfo }) {
   return (
     <>
-      <div className="w-[70%] flex items-center justify-center">
+      <div
+        className={`${
+          taskInfo == "orderDetail" ? "w-[70%]" : "w-0"
+        } flex items-center justify-center duration-300 transition-all overflow-hidden`}
+      >
         <div className="w-[90%] h-[90%]">
           <div className="mt-4 pb-4 flex items-center">
-            <ChevronLeftIcon className="w-5 h-5 xsm:w-3 xsm:h-3 cursor-pointer" />
+            <ChevronLeftIcon
+              className="w-5 h-5 xsm:w-3 xsm:h-3 cursor-pointer"
+              onClick={() => {
+                setTaskInfo("orders");
+              }}
+            />
             <h1 className="font-medium xsm:text-sm">Order detail</h1>
           </div>
           <div className="w-full h-[90%] flex flex-col gap-2 overflow-auto">

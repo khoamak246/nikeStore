@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { toogleStateSelector, userAddressSelector } from "../../App/Selectors";
 import { setOpenToogle } from "../../App/ToogleSlice";
-import { addNewAddress, setEditAddress } from "../../App/UserSlice";
+import { addNewAddress, editAddress } from "../../App/UserSlice";
 import AddNewAddress from "./Items/AddNewAddress";
 import AddressList from "./Items/AddressList";
 
@@ -61,7 +61,7 @@ export default function UpdateAddressModal() {
       ...inputNewAddress,
       id: userAddress[indexEditAddress.current].id,
     };
-    dispatch(setEditAddress(temp));
+    dispatch(editAddress(temp));
     dispatch(setOpenToogle("updateAddress"));
   };
 

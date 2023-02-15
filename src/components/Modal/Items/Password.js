@@ -1,10 +1,17 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { userPasswordSelector } from "../../../App/Selectors";
 import SquarePen from "../../../assets/SquarePen.png";
 
-export default function Password() {
+export default function Password({ taskInfo }) {
+  const userPassword = useSelector(userPasswordSelector);
   return (
     <>
-      <div className="w-[70%] flex flex-col justify-center items-center">
+      <div
+        className={`${
+          taskInfo == "password" ? "w-[70%]" : "w-0"
+        }  flex flex-col justify-center items-center overflow-hidden transition-all duration-300`}
+      >
         <div className="w-[90%] h-[90%] flex flex-col gap-4">
           <h1 className="border-b-[1px] border-solid border-[#BBB7A8] pb-4 mt-4 font-medium sm:text-sm">
             Password
@@ -15,7 +22,7 @@ export default function Password() {
                 Current Password:
               </label>
               <div className="flex items-center gap-2 sm:text-sm">
-                <input type="text" />
+                <input type="text" value={userPassword} />
                 <img
                   src={SquarePen}
                   alt="changePassword-Icon1"

@@ -3,9 +3,7 @@ import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { v4 as uuid } from "uuid";
 import { db } from "../Firebase/Config";
-/* {authorizedState: true,
-data:
-}*/
+
 const initialState = {
   authorized: false,
   data: {
@@ -15,6 +13,7 @@ const initialState = {
     email: "",
     avatar: "",
     phoneNumber: "",
+    gender: "",
     orderAddress: 0,
     address: [],
     cartItems: [],
@@ -42,6 +41,7 @@ const UserSlice = createSlice({
         email: "",
         avatar: "",
         phoneNumber: "",
+        gender: "",
         orderAddress: 0,
         address: [],
         cartItems: [],
@@ -126,15 +126,21 @@ const UserSlice = createSlice({
 
     setAddNewAddress: (state, action) => {
       const temp = { ...action.payload, id: uuid() };
+      if (state.data.address.length == 0) {
+        state.data.phoneNumber = action.payload.phoneNumber;
+      }
+
       state.data.address.push(temp);
     },
-    // TODO:
+
     setEditAddress: (state, action) => {
       const itemIndex = state.data.address.findIndex((item) => {
         return item.id == action.payload.id;
       });
+      if (itemIndex == 0) {
+        state.data.phoneNumber = action.payload.phoneNumber;
+      }
       state.data.address[itemIndex] = action.payload;
-      toast.success("Edit infomation successfully");
     },
 
     setEditOrderAddress: (state, action) => {
@@ -142,19 +148,24 @@ const UserSlice = createSlice({
     },
 
     setConFirmOrder: (state, action) => {
-      const temp = { ...action.payload, id: uuid() };
+      let idOrder = uuid();
+      let time = Timestamp.fromDate(new Date());
+      const temp = {
+        ...action.payload,
+        id: idOrder,
+        createdAt: time,
+      };
       state.data.orders.push(temp);
-      const promise = new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 2000);
+      state.data.notifications.push({
+        id: idOrder,
+        status: "pending",
+        type: "updateOrder",
+        createdAt: time,
       });
+    },
 
-      toast.promise(promise, {
-        loading: "In Processing...",
-        success: <b>Your order has been add</b>,
-        error: <b>OOP! Something wrong, let try again!</b>,
-      });
+    setAddNotifications: (state, action) => {
+      state.data.notifications.push(action.payload);
     },
   },
 });
@@ -258,12 +269,68 @@ export function removeFromLoveProduct(item) {
 }
 
 export function addNewAddress(item) {
-  return async function addNewAddress(dispatch, getState) {
+  return async function addNewAddressThunk(dispatch, getState) {
     dispatch(UserSlice.actions.setAddNewAddress(item));
     let newAddressList = getState().user.data.address;
+    let newPhoneNumber = getState().user.data.phoneNumber;
     let username = getState().user.data.userName;
     const userRef = doc(db, "user", username);
     await setDoc(userRef, { address: newAddressList }, { merge: true });
+    await setDoc(userRef, { phoneNumber: newPhoneNumber }, { merge: true });
+  };
+}
+
+export function editAddress(item) {
+  return async function editAddressThunk(dispatch, getState) {
+    dispatch(UserSlice.actions.setEditAddress(item));
+    let newAddressList = getState().user.data.address;
+    let newPhoneNumber = getState().user.data.phoneNumber;
+    let username = getState().user.data.userName;
+    const userRef = doc(db, "user", username);
+    await setDoc(userRef, { address: newAddressList }, { merge: true });
+    await setDoc(userRef, { phoneNumber: newPhoneNumber }, { merge: true });
+    toast.success("Edit infomation successfully");
+  };
+}
+
+export function conFirmOrder(item) {
+  return async function conFirmOrderThunk(dispatch, getState) {
+    dispatch(UserSlice.actions.setConFirmOrder(item));
+    let newOrdersList = getState().user.data.orders;
+    let newNotificationList = getState().user.data.notifications;
+    let username = getState().user.data.userName;
+    const userRef = doc(db, "user", username);
+    await setDoc(userRef, { orders: newOrdersList }, { merge: true });
+    await setDoc(
+      userRef,
+      { notifications: newNotificationList },
+      { merge: true }
+    );
+    const promise = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+
+    toast.promise(promise, {
+      loading: "In Processing...",
+      success: <b>Your order has been add</b>,
+      error: <b>OOP! Something wrong, let try again!</b>,
+    });
+  };
+}
+
+export function addNotifications(item) {
+  return async function addNotificationsThunk(dispatch, getState) {
+    dispatch(UserSlice.actions.setAddNotifications(item));
+    let newNotificationsList = getState().user.data.notifications;
+    let username = getState().user.data.userName;
+    const userRef = doc(db, "user", username);
+    await setDoc(
+      userRef,
+      { notifications: newNotificationsList },
+      { merge: true }
+    );
   };
 }
 
@@ -280,5 +347,6 @@ export const {
   setAddNewAddress,
   setEditAddress,
   setEditOrderAddress,
+  setAddNotifications,
 } = UserSlice.actions;
 export default UserSlice.reducer;

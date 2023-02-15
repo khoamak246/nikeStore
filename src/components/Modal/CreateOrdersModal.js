@@ -6,8 +6,9 @@ import {
   userCartSelector,
   userOrderAddressSelector,
 } from "../../App/Selectors";
-import { clearCart, setConFirmOrder } from "../../App/UserSlice";
+import { clearCart, conFirmOrder } from "../../App/UserSlice";
 import { setOpenToogle } from "../../App/ToogleSlice";
+import { v4 as uuid } from "uuid";
 
 export default function CreateOrdersModal() {
   const [disableCloseButton, setDisableCloseButton] = useState(true);
@@ -18,13 +19,16 @@ export default function CreateOrdersModal() {
 
   const onConfirmOrder = () => {
     dispatch(
-      setConFirmOrder({
+      conFirmOrder({
         name: userAddress[orderAddress].name,
         phoneNumber: userAddress[orderAddress].phoneNumber,
         address: userAddress[orderAddress].address,
         cartItems: cartItems,
+        status: "pending",
+        total: getTotalPrice,
       })
     );
+
     setDisableCloseButton(false);
     setTimeout(() => {
       dispatch(setOpenToogle(""));

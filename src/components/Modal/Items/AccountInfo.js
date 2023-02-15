@@ -8,8 +8,11 @@ import {
 } from "@heroicons/react/24/outline";
 import SquarePen from "../../../assets/SquarePen.png";
 import { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { userDataSelector } from "../../../App/Selectors";
 
-export default function AccountInfo() {
+export default function AccountInfo({ taskInfo }) {
+  const userData = useSelector(userDataSelector);
   const [checkRadio, setCheckRadio] = useState("other");
   const [checkInputText, setCheckInputText] = useState("");
   const ref = useRef(null);
@@ -43,7 +46,13 @@ export default function AccountInfo() {
 
   return (
     <>
-      <div className="w-[70%] flex justify-center items-center overflow-auto">
+      <div
+        className={`${
+          taskInfo == "accountInfo"
+            ? "w-[70%] overflow-auto"
+            : "w-0 overflow-hidden"
+        }  flex justify-center items-center duration-300 transition-all`}
+      >
         <div className="w-[90%] h-[90%] flex flex-col gap-4">
           <h1 className="border-b-[1px] border-solid border-[#BBB7A8] pb-4 font-medium xsm:text-sm">
             Account Informations
@@ -60,7 +69,7 @@ export default function AccountInfo() {
                   type="text"
                   id="userNameInput"
                   disabled={checkInputText === "userName" ? false : true}
-                  value="khoa.mak246"
+                  value={userData.userName}
                   className="w-[70%] underline-offset-4 underline text-blue-500 bg-white p-1 focus:outline-[#F3C193]"
                 />
                 <div
@@ -88,7 +97,7 @@ export default function AccountInfo() {
                   ref={ref}
                   type="text"
                   disabled={checkInputText === "name" ? false : true}
-                  value="Anh Khoa"
+                  value={userData.displayName}
                   id="nameInput"
                   className="w-[70%] underline underline-offset-4 text-blue-500 bg-white p-1 focus:outline-[#F3C193]"
                 />
@@ -117,7 +126,7 @@ export default function AccountInfo() {
                 type="text"
                 disabled={checkInputText === "email" ? false : true}
                 id="emailInput"
-                value={changeSecurity("khoa.mak246@gmail.com")}
+                value={changeSecurity(userData.email)}
                 className="w-[70%] underline-offset-4 underline text-blue-500 bg-white p-1 focus:outline-[#F3C193]"
               />
               <div className="cursor-pointer" onClick={handleOnChangeInputText}>
@@ -140,7 +149,7 @@ export default function AccountInfo() {
                 <input
                   type="radio"
                   value="male"
-                  checked={checkRadio === "male"}
+                  checked={userData.gender == "male"}
                   onChange={handleOnChangeRaioInput}
                 />
                 <label>male</label>
@@ -149,7 +158,7 @@ export default function AccountInfo() {
                 <input
                   type="radio"
                   value="female"
-                  checked={checkRadio === "female"}
+                  checked={userData.gender === "female"}
                   onChange={handleOnChangeRaioInput}
                 />
                 <label>female</label>
@@ -158,7 +167,7 @@ export default function AccountInfo() {
                 <input
                   type="radio"
                   value="other"
-                  checked={checkRadio === "other"}
+                  checked={userData.gender === "other"}
                   onChange={handleOnChangeRaioInput}
                 />
                 <label>other</label>
@@ -176,7 +185,7 @@ export default function AccountInfo() {
                 type="text"
                 disabled={checkInputText === "phone" ? false : true}
                 id="phoneInput"
-                value={changeSecurity("0975330387")}
+                value={changeSecurity(userData.phoneNumber)}
                 className="w-[70%] underline-offset-4 underline text-blue-500 bg-white p-1 focus:outline-[#F3C193]"
               />
               <div className="cursor-pointer" onClick={handleOnChangeInputText}>

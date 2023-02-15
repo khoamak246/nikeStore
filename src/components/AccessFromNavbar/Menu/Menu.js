@@ -40,18 +40,28 @@ export default function Menu() {
         >
           <div
             className="w-full shadow-lg shadow-[#606770] rounded-lg overflow-hidden cursor-pointer"
+            id="menuModalContainer"
             onClick={onChangeToogleState}
           >
             <div
               className="w-full flex items-center gap-2 py-2 pl-3 hover:bg-[#F2F3F5] group"
               id="menuModalContainer"
             >
-              <div className="inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-[#e4e6eb] rounded-full dark:bg-gray-600 group-hover:scale-105 transition-all duration-250 xxsm:hidden">
-                <span className=" text-gray-600 dark:text-gray-300 font-semibold">
+              <div
+                className="inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-[#e4e6eb] rounded-full dark:bg-gray-600 group-hover:scale-105 transition-all duration-250 xxsm:hidden"
+                id="menuModalContainer"
+              >
+                <span
+                  className=" text-gray-600 dark:text-gray-300 font-semibold"
+                  id="menuModalContainer"
+                >
                   JL
                 </span>
               </div>
-              <p className="xxsm:text-[0.6rem] group-hover:text-[1.1rem] transition-all duration-250 xxsm:text-sm">
+              <p
+                className="xxsm:text-[0.6rem] group-hover:text-[1.1rem] transition-all duration-250 xxsm:text-sm"
+                id="menuModalContainer"
+              >
                 Mai Anh Khoa
               </p>
             </div>

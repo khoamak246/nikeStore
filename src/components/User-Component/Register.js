@@ -98,6 +98,7 @@ export default function Register() {
       email: registerValue.email.value,
       avatar: "",
       phoneNumber: "",
+      gender: "other",
       address: [],
       cartItems: [],
       orders: [],
