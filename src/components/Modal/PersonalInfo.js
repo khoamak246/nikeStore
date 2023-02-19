@@ -18,11 +18,16 @@ import { toogleStateSelector } from "../../App/Selectors";
 import { setOpenToogle } from "../../App/ToogleSlice";
 
 export default function PersonalInfo() {
+  const [disableToogle, setDisableToggle] = useState(true);
   const [taskInfo, setTaskInfo] = useState("accountInfo");
+  const [idSelectedOrder, setIdSelectedOrder] = useState();
   const toogleState = useSelector(toogleStateSelector);
   const dispatch = useDispatch();
   const onChangeToogleState = () => {
-    dispatch(setOpenToogle(""));
+    if (disableToogle) {
+      dispatch(setOpenToogle(""));
+      setTaskInfo("accountInfo");
+    }
   };
   return (
     <>
@@ -108,16 +113,24 @@ export default function PersonalInfo() {
               </div>
             </div>
             <div
-              className="absolute top-2 right-6 cursor-pointer"
+              className="absolute top-2 right-6 cursor-pointer z-[50]"
               onClick={onChangeToogleState}
             >
               X
             </div>
             <AccountInfo taskInfo={taskInfo} />
-            <Password taskInfo={taskInfo} />
+            <Password taskInfo={taskInfo} setDisableToggle={setDisableToggle} />
             <Address taskInfo={taskInfo} />
-            <Orders taskInfo={taskInfo} setTaskInfo={setTaskInfo} />
-            <OrderDetail taskInfo={taskInfo} setTaskInfo={setTaskInfo} />
+            <Orders
+              taskInfo={taskInfo}
+              setTaskInfo={setTaskInfo}
+              setIdSelectedOrder={setIdSelectedOrder}
+            />
+            <OrderDetail
+              taskInfo={taskInfo}
+              setTaskInfo={setTaskInfo}
+              idSelectedOrder={idSelectedOrder}
+            />
             <Notifications taskInfo={taskInfo} />
           </div>
         </div>

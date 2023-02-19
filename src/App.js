@@ -23,8 +23,11 @@ function App() {
       "addAddress",
       "updateAddress",
       "editAddress",
+      "seenAddress",
       "order",
       "menuModalContainer",
+      "changePersonalAddress",
+      "changePersonalAddAddress",
     ];
   }, []);
 

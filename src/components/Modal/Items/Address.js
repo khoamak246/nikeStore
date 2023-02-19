@@ -1,10 +1,15 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userAddressSelector } from "../../../App/Selectors";
+import { setOpenToogle } from "../../../App/ToogleSlice";
 import SquarePen from "../../../assets/SquarePen.png";
 
 export default function Address({ taskInfo }) {
   const userAddress = useSelector(userAddressSelector);
+  const dispatch = useDispatch();
+  const onSeenAddress = () => {
+    dispatch(setOpenToogle("seenAddress"));
+  };
   return (
     <>
       <div
@@ -29,7 +34,7 @@ export default function Address({ taskInfo }) {
                     {val.address}
                   </p>
                 </div>
-                <div className="cursor-pointer">
+                <div className="cursor-pointer" onClick={onSeenAddress}>
                   <img
                     src={SquarePen}
                     alt="changeAddressIcon"

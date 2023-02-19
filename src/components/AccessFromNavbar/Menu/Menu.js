@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ArrowRightOnRectangleIcon,
   HomeIcon,
@@ -8,13 +8,19 @@ import {
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import PersonalInfo from "../../Modal/PersonalInfo";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleStateSelector } from "../../../App/Selectors";
+import {
+  toogleStateSelector,
+  userAvatarSelector,
+  userDisplayNameSelector,
+} from "../../../App/Selectors";
 import { setOpenToogle } from "../../../App/ToogleSlice";
 import { setUserLogout } from "../../../App/UserSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function Menu() {
   const navigate = useNavigate();
+  const userDisplayName = useSelector(userDisplayNameSelector);
+  const userAvatar = useSelector(userAvatarSelector);
   const tootgleSate = useSelector(toogleStateSelector);
   const dispatch = useDispatch();
 
@@ -27,6 +33,11 @@ export default function Menu() {
     dispatch(setOpenToogle(""));
     navigate("/login");
   };
+
+  const displayAvatar = useMemo(() => {
+    let sortName = userDisplayName.split(" ");
+    return sortName[sortName.length - 1][0];
+  }, []);
 
   return (
     <>
@@ -48,21 +59,29 @@ export default function Menu() {
               id="menuModalContainer"
             >
               <div
-                className="inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-[#e4e6eb] rounded-full dark:bg-gray-600 group-hover:scale-105 transition-all duration-250 xxsm:hidden"
+                className="inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-[#e4e6eb] rounded-full group-hover:scale-105 transition-all duration-250 xxsm:hidden"
                 id="menuModalContainer"
               >
-                <span
-                  className=" text-gray-600 dark:text-gray-300 font-semibold"
-                  id="menuModalContainer"
-                >
-                  JL
-                </span>
+                {userAvatar.length > 0 ? (
+                  <img
+                    src="https://firebasestorage.googleapis.com/v0/b/nikestore-61243.appspot.com/o/asset%2Fimg%2Fhightlightimg.png?alt=media&token=d00c7765-e7fa-4791-9b58-bd875a6ed7e7"
+                    alt=""
+                    className="object-contain w-full h-full"
+                  />
+                ) : (
+                  <span
+                    className=" text-gray-600 dark:text-gray-300 font-semibold"
+                    id="menuModalContainer"
+                  >
+                    {displayAvatar}
+                  </span>
+                )}
               </div>
               <p
                 className="xxsm:text-[0.6rem] group-hover:text-[1.1rem] transition-all duration-250 xxsm:text-sm"
                 id="menuModalContainer"
               >
-                Mai Anh Khoa
+                {userDisplayName}
               </p>
             </div>
             <div className="w-full xxsm:text-[0.6rem] xxsm:p-1 xxsm-hover:bg-[#e4e6eb] xxsm-hover: border-t-2 pl-3 hover:bg-[#e4e6eb] hover:text-[1.1rem] transition-all duration-250 py-3">

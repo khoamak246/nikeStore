@@ -3,9 +3,8 @@ import { useSelector } from "react-redux";
 import { userOrderListSelector } from "../../../App/Selectors";
 import OrderItems from "./OrderItems";
 
-export default function Orders({ taskInfo, setTaskInfo }) {
+export default function Orders({ taskInfo, setTaskInfo, setIdSelectedOrder }) {
   const userOrders = useSelector(userOrderListSelector);
-  console.log(userOrders);
   return (
     <>
       <div
@@ -18,7 +17,12 @@ export default function Orders({ taskInfo, setTaskInfo }) {
           <div className="w-full h-[95%] overflow-auto">
             {userOrders?.map((val, index) => {
               return (
-                <OrderItems key={val.id} item={val} setTaskInfo={setTaskInfo} />
+                <OrderItems
+                  key={val.id}
+                  item={val}
+                  setTaskInfo={setTaskInfo}
+                  setIdSelectedOrder={setIdSelectedOrder}
+                />
               );
             })}
           </div>

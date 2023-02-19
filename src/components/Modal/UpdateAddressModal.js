@@ -22,6 +22,11 @@ export default function UpdateAddressModal() {
   const onChangeToogleState = () => {
     toogleState == "addAddress" || toogleState == "editAddress"
       ? dispatch(setOpenToogle("updateAddress"))
+      : toogleState == "changePersonalAddress" ||
+        toogleState == "changePersonalAddAddress"
+      ? dispatch(setOpenToogle("seenAddress"))
+      : toogleState == "seenAddress"
+      ? dispatch(setOpenToogle("menuModalContainer"))
       : dispatch(setOpenToogle(""));
 
     setInputNewAddress({
@@ -34,19 +39,30 @@ export default function UpdateAddressModal() {
   const onGetValueEditAddress = (index) => {
     setInputNewAddress(userAddress[index]);
     indexEditAddress.current = index;
-    dispatch(setOpenToogle("editAddress"));
+    if (toogleState == "seenAddress") {
+      dispatch(setOpenToogle("changePersonalAddress"));
+    } else {
+      dispatch(setOpenToogle("editAddress"));
+    }
   };
 
   const onAddAddress = () => {
     for (const val of Object.entries(inputNewAddress)) {
       if (val[1].trim().length == 0) {
         return toast.error("OOP! You forgot input something");
-      } else if (val[0].trim() == "phoneNumber" && val[1].trim().length > 10) {
+      } else if (
+        val[0].trim() == "phoneNumber" &&
+        val[1].trim().length !== 10
+      ) {
         return toast.error("OOP! Error type phone number!");
       }
     }
     dispatch(addNewAddress(inputNewAddress));
-    dispatch(setOpenToogle("updateAddress"));
+    if (toogleState == "addAddress") {
+      dispatch(setOpenToogle("updateAddress"));
+    } else {
+      dispatch(setOpenToogle("seenAddress"));
+    }
   };
 
   const onEditAddress = () => {
@@ -62,19 +78,33 @@ export default function UpdateAddressModal() {
       id: userAddress[indexEditAddress.current].id,
     };
     dispatch(editAddress(temp));
-    dispatch(setOpenToogle("updateAddress"));
+    if (toogleState == "editAddress") {
+      dispatch(setOpenToogle("updateAddress"));
+    } else {
+      dispatch(setOpenToogle("menuModalContainer"));
+    }
   };
 
   const onUpdateOrderForm = () => {
-    dispatch(setOpenToogle("order"));
+    if (toogleState == "updateAddress") {
+      dispatch(setOpenToogle("order"));
+    } else {
+      dispatch(setOpenToogle("menuModalContainer"));
+    }
   };
 
   const onClickConfirm = () => {
-    if (toogleState == "addAddress") {
+    if (
+      toogleState == "addAddress" ||
+      toogleState == "changePersonalAddAddress"
+    ) {
       onAddAddress();
-    } else if (toogleState == "editAddress") {
+    } else if (
+      toogleState == "editAddress" ||
+      toogleState == "changePersonalAddress"
+    ) {
       onEditAddress();
-    } else if (toogleState == "updateAddress") {
+    } else if (toogleState == "updateAddress" || toogleState == "seenAddress") {
       onUpdateOrderForm();
     }
 
@@ -91,7 +121,10 @@ export default function UpdateAddressModal() {
         className={`${
           toogleState == "addAddress" ||
           toogleState == "updateAddress" ||
-          toogleState == "editAddress"
+          toogleState == "editAddress" ||
+          toogleState == "seenAddress" ||
+          toogleState == "changePersonalAddress" ||
+          toogleState == "changePersonalAddAddress"
             ? "max-h-full"
             : "max-h-0"
         } fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-[250] transition-all duration-300 overflow-hidden ease-in-out`}
@@ -100,7 +133,10 @@ export default function UpdateAddressModal() {
           className={`${
             toogleState == "addAddress" ||
             toogleState == "updateAddress" ||
-            toogleState == "editAddress"
+            toogleState == "editAddress" ||
+            toogleState == "seenAddress" ||
+            toogleState == "changePersonalAddress" ||
+            toogleState == "changePersonalAddAddress"
               ? "max-h-full"
               : "max-h-0"
           } bg-white w-[40%] md:w-[60%] sm:w-full h-[80%] sm:h-full sm:rounded-none  flex justify-center items-center rounded-xl p-5 transition-all duration-500 overflow-hidden ease-in-out`}

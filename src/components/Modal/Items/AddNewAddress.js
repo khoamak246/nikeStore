@@ -9,7 +9,10 @@ export default function AddNewAddress({ inputNewAddress, setInputNewAddress }) {
     <>
       <div
         className={`${
-          toogleState == "addAddress" || toogleState == "editAddress"
+          toogleState == "addAddress" ||
+          toogleState == "changePersonalAddAddress" ||
+          toogleState == "editAddress" ||
+          toogleState == "changePersonalAddress"
             ? "w-full"
             : "w-0"
         } duration-75 transition-all overflow-hidden ease-in-out`}

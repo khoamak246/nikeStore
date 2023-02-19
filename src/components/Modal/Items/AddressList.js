@@ -21,7 +21,12 @@ export default function AddressList({ onGetValueEditAddress }) {
         duration: 1500,
       });
     }
-    return dispatch(setOpenToogle("addAddress"));
+
+    if (toogleState == "updateAddress") {
+      return dispatch(setOpenToogle("addAddress"));
+    } else {
+      return dispatch(setOpenToogle("changePersonalAddAddress"));
+    }
   };
 
   const onSelectInputRadio = (index) => {
@@ -32,7 +37,9 @@ export default function AddressList({ onGetValueEditAddress }) {
     <>
       <div
         className={`${
-          toogleState == "updateAddress" ? "w-full" : "w-0"
+          toogleState == "updateAddress" || toogleState == "seenAddress"
+            ? "w-full"
+            : "w-0"
         } duration-75 transition-all ease-in-out overflow-hidden flex flex-col gap-3`}
       >
         {userAddress?.map((val, index) => {

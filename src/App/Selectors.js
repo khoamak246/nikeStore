@@ -2,6 +2,8 @@ export const userAuthorizedState = (state) => state.user.authorized;
 export const userDataSelector = (state) => state.user.data;
 export const userNotificationSelector = (state) =>
   state.user.data.notifications;
+export const userDisplayNameSelector = (state) => state.user.data.displayName;
+export const userAvatarSelector = (state) => state.user.data.avatar;
 export const userPasswordSelector = (state) => state.user.data.password;
 export const userCartSelector = (state) => state.user.data.cartItems;
 export const userLoveProductSelector = (state) => state.user.data.loveProducts;
