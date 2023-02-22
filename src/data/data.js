@@ -223,7 +223,7 @@ export { panelapi, footerAPI };
 */
 
 /* 
-* PopularRight now
+* PopularRightnow
 ? https://www.nike.com/t/air-max-90-mens-shoes-6n3vKB/CN8490-001
 ? https://www.nike.com/t/air-max-90-futura-womens-shoes-kvRZ4h/DM9922-104
 ? https://www.nike.com/t/air-jordan-3-retro-se-big-kids-shoes-J6v0Md/DV7028-108
@@ -281,6 +281,17 @@ cart:[]
 orders:[]
 loveProducts:[]
 notifications:[]
+
+
+!search
+
+catalog:
+img:""
+key:
+name:
+price:
+productId:
+typeId:
 
 
 */

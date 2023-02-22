@@ -37,7 +37,7 @@ export default function Menu() {
   const displayAvatar = useMemo(() => {
     let sortName = userDisplayName.split(" ");
     return sortName[sortName.length - 1][0];
-  }, []);
+  }, [userDisplayName]);
 
   return (
     <>

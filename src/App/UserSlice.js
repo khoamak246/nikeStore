@@ -63,84 +63,12 @@ const UserSlice = createSlice({
       }
     },
 
-    setUserChangePassword: (state, action) => {
-      state.data.password = action.payload;
-      toast.success("Password changed successfully!", { duration: 1500 });
-    },
-
-    setAddToCart: (state, action) => {
-      state.data.cartItems = action.payload;
-      toast.success(`Add to cart successfully`, { duration: 1500 });
-    },
-
-    setRemoveFromCart: (state, action) => {
-      state.data.cartItems = action.payload;
-      toast.success("Removed successfully", { duration: 1500 });
-    },
-
-    setIncreaseQuantity: (state, action) => {
-      state.data.cartItems = action.payload;
-    },
-
-    setDecreaseQuantity: (state, action) => {
-      state.data.cartItems = action.payload;
-    },
-
-    setClearCart: (state, action) => {
-      state.data.cartItems = [];
-    },
-
-    setAddToLoveProduct: (state, action) => {
-      state.data.loveProducts = action.payload;
-      toast.success("Add to favorite list successfully", {
-        duration: 1500,
-      });
-    },
-
-    setRemoveFromLoveProduct: (state, action) => {
-      state.data.loveProducts = action.payload;
-      toast.success("Removed successfully", { duration: 1500 });
-    },
-
-    setAddNewAddress: (state, action) => {
-      state.data.address = action.payload.newAddressList;
-      state.data.phoneNumber = action.payload.newPhoneNumber;
-    },
-
-    setEditAddress: (state, action) => {
-      state.data.address = action.payload.newAddressList;
-      state.data.phoneNumber = action.payload.newPhoneNumber;
-
-      toast.success("Edit infomation successfully");
-    },
-
     setEditOrderAddress: (state, action) => {
       state.data.orderAddress = action.payload;
     },
-
-    setConFirmOrder: (state, action) => {
-      state.data.orders = action.payload.newOrdersList;
-      state.data.notifications = action.payload.newNotificationList;
-
-      const promise = new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 2000);
-      });
-
-      toast.promise(promise, {
-        loading: "In Processing...",
-        success: <b>Your order has been add</b>,
-        error: <b>OOP! Something wrong, let try again!</b>,
-      });
-    },
-
-    setAddNotifications: (state, action) => {
-      state.data.notifications = action.payload.newNotificationsList;
-    },
   },
 });
-
+// ? okie
 export function userLogin(user) {
   return async function userLoginThunk(dispatch) {
     let lastLoginTime = Timestamp.fromDate(new Date());
@@ -166,12 +94,14 @@ export function userLogin(user) {
   };
 }
 
+// ? okie
 export function addToCart(item) {
   return async function addToCartThunk(dispatch, getState) {
     let newCartItems = [];
     let username = getState().user.data.userName;
     let curCartItems = getState().user.data.cartItems;
     const userRef = doc(db, "user", username);
+    const categoryRef = doc(db, "categoryPage", item.catalogName);
     const itemIndex = curCartItems.findIndex((cartItem) => {
       return cartItem.typeId === item.typeId && cartItem.size === item.size;
     });
@@ -181,40 +111,89 @@ export function addToCart(item) {
         if (i == itemIndex) {
           let editValue = { ...curCartItems[i] };
           editValue.cartQuantity += 1;
+          editValue.stock = item.stock;
+          editValue.newCatalog = item.newCatalog;
           newCartItems.push(editValue);
+        } else if (curCartItems[i].catalog == item.catalog) {
+          newCartItems.push({
+            ...curCartItems[i],
+            newCatalog: item.newCatalog,
+          });
+        }
+      }
+    } else {
+      for (let i = 0; i < curCartItems.length; i++) {
+        if (curCartItems[i].catalog == item.catalog) {
+          newCartItems.push({
+            ...curCartItems[i],
+            newCatalog: item.newCatalog,
+          });
         } else {
           newCartItems.push(curCartItems[i]);
         }
       }
-    } else {
       const temp = { ...item, cartQuantity: 1 };
-      newCartItems = [...curCartItems, temp];
+      newCartItems.push(temp);
     }
 
+    await setDoc(categoryRef, { items: item.newCatalog }, { merge: true });
     await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
-    dispatch(UserSlice.actions.setAddToCart(newCartItems));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "cartItems",
+        newValue: newCartItems,
+        toast: "Add to cart successfully",
+      })
+    );
   };
 }
 
+// ? okie
 export function removeFromCart(item) {
   return async function removeFromCartThunk(dispatch, getState) {
+    let newCartItems = [];
     let username = getState().user.data.userName;
+    let curCartItems = getState().user.data.cartItems;
     const userRef = doc(db, "user", username);
-    let newCartItems = getState().user.data.cartItems;
-    const removeItem = newCartItems.filter((cartItem) => {
+    const categoryRef = doc(db, "categoryPage", item.catalogName);
+    const removeItem = curCartItems.filter((cartItem) => {
       return cartItem.typeId !== item.typeId || cartItem.size !== item.size;
     });
-    newCartItems = removeItem;
+
+    for (let i = 0; i < removeItem.length; i++) {
+      if (removeItem[i].catalog == item.catalog) {
+        newCartItems.push({
+          ...removeItem[i],
+          newCatalog: item.newUpdateProductInfo,
+        });
+      } else {
+        newCartItems.push(removeItem[i]);
+      }
+    }
+
+    await setDoc(
+      categoryRef,
+      { items: item.newUpdateProductInfo },
+      { merge: true }
+    );
     await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
-    dispatch(UserSlice.actions.setRemoveFromCart(newCartItems));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "cartItems",
+        newValue: newCartItems,
+        toast: "Removed successfully",
+      })
+    );
   };
 }
 
+// ? okie
 export function increaseQuantity(item) {
   return async function increaseQuantityThunk(dispatch, getState) {
     let newCartItems = [];
     let curCartItems = getState().user.data.cartItems;
     let username = getState().user.data.userName;
+    const categoryRef = doc(db, "categoryPage", item.catalogName);
     const userRef = doc(db, "user", username);
 
     const itemIndex = curCartItems.findIndex((cartItem) => {
@@ -223,25 +202,47 @@ export function increaseQuantity(item) {
 
     let editValue = { ...curCartItems[itemIndex] };
     editValue.cartQuantity += 1;
+    editValue.stock -= 1;
+    editValue.newCatalog = item.newUpdateProductInfo;
     for (let i = 0; i < curCartItems.length; i++) {
       if (i == itemIndex) {
+        console.log("in1");
         newCartItems.push(editValue);
+      } else if (curCartItems[i].catalog == item.catalog) {
+        console.log("in2");
+        newCartItems.push({
+          ...curCartItems[i],
+          newCatalog: item.newUpdateProductInfo,
+        });
       } else {
+        console.log("in3");
         newCartItems.push(curCartItems[i]);
       }
     }
 
+    await setDoc(
+      categoryRef,
+      { items: item.newUpdateProductInfo },
+      { merge: true }
+    );
     await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
-    dispatch(UserSlice.actions.setIncreaseQuantity(newCartItems));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "cartItems",
+        newValue: newCartItems,
+      })
+    );
   };
 }
 
+// ? okie
 export function decreaseQuantity(item) {
   return async function decreaseQuantityThunk(dispatch, getState) {
     let newCartItems = [];
     let curCartItems = getState().user.data.cartItems;
     let username = getState().user.data.userName;
     const userRef = doc(db, "user", username);
+    const categoryRef = doc(db, "categoryPage", item.catalogName);
 
     const itemIndex = curCartItems.findIndex((cartItem) => {
       return cartItem.typeId === item.typeId && cartItem.size === item.size;
@@ -253,27 +254,51 @@ export function decreaseQuantity(item) {
       } else if (curCartItems[i].cartQuantity !== 1 && itemIndex == i) {
         let editValue = { ...curCartItems[i] };
         editValue.cartQuantity -= 1;
+        editValue.stock += 1;
+        editValue.newCatalog = item.newUpdateProductInfo;
         newCartItems.push(editValue);
+      } else if (curCartItems[i].catalog == item.catalog) {
+        newCartItems.push({
+          ...curCartItems[i],
+          newCatalog: item.newUpdateProductInfo,
+        });
       } else {
-        newCartItems.push(curCartItems[i]);
+        newCartItems.push(...curCartItems[i]);
       }
     }
 
+    await setDoc(
+      categoryRef,
+      { items: item.newUpdateProductInfo },
+      { merge: true }
+    );
     await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
-    dispatch(UserSlice.actions.setDecreaseQuantity(newCartItems));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "cartItems",
+        newValue: newCartItems,
+      })
+    );
   };
 }
 
+// ? okie
 export function clearCart() {
   return async function clearCartThunk(dispatch, getState) {
     let newCartItems = [];
     let username = getState().user.data.userName;
     const userRef = doc(db, "user", username);
     await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
-    dispatch(UserSlice.actions.setClearCart());
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "cartItems",
+        newValue: newCartItems,
+      })
+    );
   };
 }
 
+// ? okie
 export function addToLoveProduct(item) {
   return async function addToLoveProductThunk(dispatch, getState) {
     let newLoveProducts = [];
@@ -292,10 +317,17 @@ export function addToLoveProduct(item) {
       newLoveProducts = [...curLoveProducts, item];
     }
     await setDoc(userRef, { loveProducts: newLoveProducts }, { merge: true });
-    dispatch(UserSlice.actions.setAddToLoveProduct(newLoveProducts));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "loveProducts",
+        newValue: newLoveProducts,
+        toast: "Add to favorite list successfully!",
+      })
+    );
   };
 }
 
+// ? okie
 export function removeFromLoveProduct(item) {
   return async function removeFromLoveProductThunk(dispatch, getState) {
     let newLoveProducts;
@@ -307,21 +339,29 @@ export function removeFromLoveProduct(item) {
     });
     newLoveProducts = removeItem;
     await setDoc(userRef, { loveProducts: newLoveProducts }, { merge: true });
-    dispatch(UserSlice.actions.setRemoveFromLoveProduct(newLoveProducts));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "loveProducts",
+        newValue: newLoveProducts,
+        toast: "Removed successfully!",
+      })
+    );
   };
 }
 
+// ? okie
 export function addNewAddress(item) {
   return async function addNewAddressThunk(dispatch, getState) {
     let newAddressList;
     let newPhoneNumber;
     let curAddressList = getState().user.data.address;
+    let curPhoneNumber = getState().user.data.phoneNumber;
     let username = getState().user.data.userName;
     const userRef = doc(db, "user", username);
 
     const temp = { ...item, id: uuid() };
 
-    if (curAddressList.length == 0) {
+    if (curAddressList.length == 0 && curPhoneNumber.length == 0) {
       newPhoneNumber = item.phoneNumber;
     } else {
       newPhoneNumber = getState().user.data.phoneNumber;
@@ -330,16 +370,25 @@ export function addNewAddress(item) {
     newAddressList = [...curAddressList, temp];
     await setDoc(userRef, { address: newAddressList }, { merge: true });
     await setDoc(userRef, { phoneNumber: newPhoneNumber }, { merge: true });
-    dispatch(
-      UserSlice.actions.setAddNewAddress({ newAddressList, newPhoneNumber })
+    await dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "address",
+        newValue: newAddressList,
+      })
+    );
+    await dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "phoneNumber",
+        newValue: newPhoneNumber,
+      })
     );
   };
 }
 
+// ? okie
 export function editAddress(item) {
   return async function editAddressThunk(dispatch, getState) {
     let newAddressList = [];
-    let newPhoneNumber;
     let curAddressList = getState().user.data.address;
     let username = getState().user.data.userName;
     const userRef = doc(db, "user", username);
@@ -347,12 +396,6 @@ export function editAddress(item) {
     const itemIndex = curAddressList.findIndex((address) => {
       return address.id == item.id;
     });
-
-    if (itemIndex == 0) {
-      newPhoneNumber = item.phoneNumber;
-    } else {
-      newPhoneNumber = getState().user.data.phoneNumber;
-    }
 
     for (let i = 0; i < curAddressList.length; i++) {
       if (i == itemIndex) {
@@ -363,13 +406,17 @@ export function editAddress(item) {
     }
 
     await setDoc(userRef, { address: newAddressList }, { merge: true });
-    await setDoc(userRef, { phoneNumber: newPhoneNumber }, { merge: true });
-    dispatch(
-      UserSlice.actions.setEditAddress({ newAddressList, newPhoneNumber })
+    await dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "address",
+        newValue: newAddressList,
+      })
     );
+    toast.success("Edit infomation successfully", { duration: 1500 });
   };
 }
 
+// ? okie
 export function conFirmOrder(item) {
   return async function conFirmOrderThunk(dispatch, getState) {
     let newOrdersList;
@@ -403,12 +450,34 @@ export function conFirmOrder(item) {
       { notifications: newNotificationList },
       { merge: true }
     );
-    dispatch(
-      UserSlice.actions.setConFirmOrder({ newOrdersList, newNotificationList })
+    await dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "orders",
+        newValue: newOrdersList,
+      })
     );
+    await dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "notifications",
+        newValue: newNotificationList,
+      })
+    );
+
+    const promise = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+
+    toast.promise(promise, {
+      loading: "In Processing...",
+      success: <b>Your order has been add</b>,
+      error: <b>OOP! Something wrong, let try again!</b>,
+    });
   };
 }
 
+// ? okie
 export function addNotifications(item) {
   return async function addNotificationsThunk(dispatch, getState) {
     let curNotificationsList = getState().user.data.notifications;
@@ -421,19 +490,32 @@ export function addNotifications(item) {
       { notifications: newNotificationsList },
       { merge: true }
     );
-    dispatch(UserSlice.actions.setAddNotifications(newNotificationsList));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "notifications",
+        newValue: newNotificationsList,
+      })
+    );
   };
 }
 
+// ? okie
 export function userChangePassword(item) {
   return async function userChangePassWordThunk(dispatch, getState) {
     let username = getState().user.data.userName;
     const userRef = doc(db, "user", username);
     await setDoc(userRef, { password: item }, { merge: true });
-    dispatch(UserSlice.actions.setUserChangePassword(item));
+    dispatch(
+      UserSlice.actions.setUserChangeInfo({
+        key: "password",
+        newValue: item,
+        toast: `Password changed successfully!`,
+      })
+    );
   };
 }
 
+// ? okie
 export function userChangeInfo(item) {
   return async function userChangeInfoThunk(dispatch, getState) {
     let newValue = item.value;
@@ -447,19 +529,5 @@ export function userChangeInfo(item) {
   };
 }
 
-export const {
-  setUserLogout,
-  setAddToCart,
-  setRemoveFromCart,
-  setIncreaseQuantity,
-  setDecreaseQuantity,
-  setClearCart,
-  setAddToLoveProduct,
-  setRemoveFromLoveProduct,
-  setConFirmOrder,
-  setAddNewAddress,
-  setEditAddress,
-  setEditOrderAddress,
-  setAddNotifications,
-} = UserSlice.actions;
+export const { setUserLogout, setEditOrderAddress } = UserSlice.actions;
 export default UserSlice.reducer;

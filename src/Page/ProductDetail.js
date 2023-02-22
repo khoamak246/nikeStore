@@ -29,6 +29,7 @@ export default function ProductDetail() {
   }, [param]);
 
   const [product] = pageData;
+
   useEffect(() => {
     let getProductInfo;
     if (isLoading == "completed") {
@@ -58,6 +59,7 @@ export default function ProductDetail() {
                     productInfo={productInfo}
                     productId={param.productId}
                     typeId={param.typeId}
+                    catalog={product?.items}
                   />
                   {productInfo.introduce && (
                     <Introduce introduce={productInfo.introduce} />

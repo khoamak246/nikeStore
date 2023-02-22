@@ -25,12 +25,12 @@ export default function Address({ taskInfo }) {
                 className="w-full flex justify-between items-center border-[1px] border-solid border-[#BBB7A8] p-4 rounded-lg"
                 key={val.id}
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col w-full">
                   <p className=" font-medium xsm:text-sm">{val.name}</p>
                   <p className="text-sm text-[#D1B192] xsm:text-sm">
                     {val.phoneNumber}
                   </p>
-                  <p className="text-sm text-[#D1B192] xsm:text-sm w-[70%]">
+                  <p className="text-sm text-[#D1B192] xsm:text-sm w-[80%]">
                     {val.address}
                   </p>
                 </div>

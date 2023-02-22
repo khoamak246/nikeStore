@@ -2,6 +2,7 @@ import React from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setOpenToogle } from "../../App/ToogleSlice";
 
 export default function CustomToast({ title, text, action, value, btn, id }) {
   const dispatch = useDispatch();
@@ -30,7 +31,12 @@ export default function CustomToast({ title, text, action, value, btn, id }) {
       <div className="flex border-l border-gray-200">
         <button
           onClick={() => {
-            action ? dispatch(action(value)) : navigate(value);
+            if (action) {
+              dispatch(action(value));
+            } else {
+              dispatch(setOpenToogle(""));
+              navigate(value);
+            }
 
             return toast.dismiss(id.id);
           }}

@@ -1,4 +1,10 @@
-import { Menu, Cart, LoveProduct, Search } from "../AccessFromNavbar";
+import {
+  Menu,
+  Cart,
+  LoveProduct,
+  Search,
+  SearchResult,
+} from "../AccessFromNavbar";
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   HeartIcon,
@@ -27,6 +33,7 @@ const Navbar = ({ path }) => {
   const toogleState = useSelector(toogleStateSelector);
   const dispatch = useDispatch();
   const [navState, setNavState] = useState(false);
+  const [search, setSearch] = useState("");
   const focusSearchInput = useRef(null);
 
   const onNavScroll = () => {
@@ -45,6 +52,7 @@ const Navbar = ({ path }) => {
   }, []);
 
   useEffect(() => {
+    setSearch("");
     toogleState == "search" && focusSearchInput.current.focus();
   }, [toogleState]);
 
@@ -104,6 +112,8 @@ const Navbar = ({ path }) => {
                 <Search
                   focusSearchInput={focusSearchInput}
                   navState={navState}
+                  setSearch={setSearch}
+                  search={search}
                 />
               ) : (
                 <ul className="flex items-center justify-center gap-2 sm:hidden">
@@ -155,6 +165,7 @@ const Navbar = ({ path }) => {
                 </ul>
               )}
             </div>
+
             <div
               className={`${
                 toogleState == "search" ? "block cursor-pointer" : "hidden"
@@ -290,6 +301,7 @@ const Navbar = ({ path }) => {
       <LoveProduct />
       <SearchModal />
       <UpdateAddressModal />
+      <SearchResult navState={navState} search={search} />
     </>
   );
 };

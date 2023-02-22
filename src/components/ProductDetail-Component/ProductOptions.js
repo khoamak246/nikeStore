@@ -4,7 +4,7 @@ import Rating from "./Rating";
 import ProductDetailModal from "../Modal/ProductDetailModal";
 import CommentModal from "../Modal/CommentModal";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, addToLoveProduct } from "../../App/UserSlice";
 import { toast } from "react-hot-toast";
@@ -12,7 +12,13 @@ import { setOpenToogle } from "../../App/ToogleSlice";
 import { userAuthorizedState } from "../../App/Selectors";
 import CustomToast from "../ToastNotification/CustomToast";
 
-export default function ProductOptions({ productInfo, productId, typeId }) {
+export default function ProductOptions({
+  productInfo,
+  productId,
+  typeId,
+  catalog,
+}) {
+  const param = useParams();
   const navigate = useNavigate();
   const authorizedState = useSelector(userAuthorizedState);
   const dispatch = useDispatch();
@@ -25,20 +31,61 @@ export default function ProductOptions({ productInfo, productId, typeId }) {
     dispatch(setOpenToogle(e.target.id));
   };
 
+  const updateStock = () => {
+    const productIndex = catalog.findIndex((val) => {
+      return val.id == productId;
+    });
+    const typeIndex = type.findIndex((val) => {
+      return val.id == typeId;
+    });
+    const sizeIndex = selectedProduct.size.findIndex((val) => {
+      return val.type === slelectSize.type;
+    });
+    let newSizeList = [...selectedProduct.size];
+    newSizeList[sizeIndex] = {
+      type: slelectSize.type,
+      stock: slelectSize.stock - 1,
+    };
+    const newUpadatedProduct = { ...selectedProduct, size: newSizeList };
+    const newTypeList = [...type];
+    newTypeList[typeIndex] = newUpadatedProduct;
+    const newCatalog = [...catalog];
+    newCatalog[productIndex] = {
+      ...newCatalog[productIndex],
+      type: newTypeList,
+    };
+    setSlelectSize({ ...slelectSize, stock: slelectSize.stock - 1 });
+    return newCatalog;
+  };
+
   const onAddCart = () => {
-    slelectSize
-      ? dispatch(
-          addToCart({
-            productId: productId,
-            typeId: typeId,
-            name: name,
-            img: selectedProduct.avatar,
-            forGender: forGender,
-            price: price,
-            size: slelectSize,
-          })
-        )
-      : toast.error(`OOP! You forgot to pick your size`, { duration: 1500 });
+    if (slelectSize && slelectSize.stock > 0) {
+      const newCatalog = updateStock();
+
+      dispatch(
+        addToCart({
+          productId: productId,
+          typeId: typeId,
+          name: name,
+          img: selectedProduct.avatar,
+          forGender: forGender,
+          price: price,
+          size: slelectSize.type,
+          catalogName: param.catalogName,
+          newCatalog: newCatalog,
+          stock: slelectSize.stock - 1,
+        })
+      );
+    } else {
+      toast.error(
+        `${
+          slelectSize.stock > 0
+            ? "OOP! You forgot to pick your size"
+            : "OOP! This product sold out!"
+        } `,
+        { duration: 1500 }
+      );
+    }
   };
 
   const onAddLoveProduct = () => {
@@ -148,14 +195,14 @@ export default function ProductOptions({ productInfo, productId, typeId }) {
                         ? "border-[#e5e5e5] text-[#DDDDDD] bg-[#F7F7F7] hover:cursor-default"
                         : "hover:border-black hover:cursor-pointer"
                     } ${
-                      slelectSize == val.type && val.stock > 0
+                      slelectSize?.type == val.type && val.stock > 0
                         ? "border-black"
                         : ""
                     }`}
                     key={index}
                     id={val.type}
                     onClick={(e) => {
-                      val.stock > 0 && setSlelectSize(e.target.id);
+                      val.stock > 0 && setSlelectSize(val);
                     }}
                   >
                     {val.type}

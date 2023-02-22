@@ -6,33 +6,104 @@ import {
   increaseQuantity,
   removeFromCart,
 } from "../../../App/UserSlice";
+import { toast } from "react-hot-toast";
 
 export default function SideListItem({ item }) {
-  const { typeId, name, price, size, forGender, img, cartQuantity } = item;
+  const {
+    productId,
+    typeId,
+    name,
+    price,
+    size,
+    forGender,
+    img,
+    cartQuantity,
+    newCatalog,
+    catalogName,
+    stock,
+  } = item;
+
   const dispatch = useDispatch();
+
+  const handleUpdateProduct = (action) => {
+    const propductIndex = newCatalog.findIndex((val) => {
+      return val.id == productId;
+    });
+
+    const typeIndex = newCatalog[propductIndex].type.findIndex((val) => {
+      return val.id == typeId;
+    });
+
+    const sizeIndex = newCatalog[propductIndex].type[typeIndex].size.findIndex(
+      (val) => {
+        return val.type == size;
+      }
+    );
+    const newSizelist = [...newCatalog[propductIndex].type[typeIndex].size];
+    const sizeUpdate = { ...newSizelist[sizeIndex] };
+    if (action == "increase") {
+      sizeUpdate.stock -= 1;
+    } else if (action == "decrease") {
+      sizeUpdate.stock += 1;
+    } else if (action == "remove") {
+      sizeUpdate.stock += cartQuantity;
+    }
+    newSizelist[sizeIndex] = sizeUpdate;
+
+    const newTypeList = [...newCatalog[propductIndex].type];
+    const typeUpdate = {
+      ...newCatalog[propductIndex].type[typeIndex],
+      size: newSizelist,
+    };
+    newTypeList[typeIndex] = typeUpdate;
+
+    const newCataloglist = [...newCatalog];
+    const catalogUpdate = {
+      ...newCataloglist[propductIndex],
+      type: newTypeList,
+    };
+    newCataloglist[propductIndex] = catalogUpdate;
+
+    return newCataloglist;
+  };
+
   const onRemoveProduct = () => {
+    const newUpdateProductInfo = handleUpdateProduct("remove");
     dispatch(
       removeFromCart({
-        typeId: typeId,
-        size: size,
+        catalogName,
+        typeId,
+        size,
+        newUpdateProductInfo,
       })
     );
   };
 
   const onIncreaseCartQuantity = () => {
-    dispatch(
-      increaseQuantity({
-        typeId: typeId,
-        size: size,
-      })
-    );
+    const newUpdateProductInfo = handleUpdateProduct("increase");
+    if (stock > 0) {
+      dispatch(
+        increaseQuantity({
+          catalogName,
+          typeId,
+          size,
+          newUpdateProductInfo,
+        })
+      );
+    } else {
+      toast.error("OOP! This product sold out!");
+    }
   };
 
   const onDecreaseQuantity = () => {
+    const newUpdateProductInfo = handleUpdateProduct("decrease");
+
     dispatch(
       decreaseQuantity({
-        typeId: typeId,
-        size: size,
+        catalogName,
+        typeId,
+        size,
+        newUpdateProductInfo,
       })
     );
   };
