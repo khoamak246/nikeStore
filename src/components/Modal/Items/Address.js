@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userAddressSelector } from "../../../App/Selectors";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+import { userAddressSelector } from "../../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
 import SquarePen from "../../../assets/SquarePen.png";
 
 export default function Address({ taskInfo }) {

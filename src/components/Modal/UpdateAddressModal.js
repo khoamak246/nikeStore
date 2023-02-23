@@ -2,11 +2,14 @@ import React, { useRef } from "react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleStateSelector, userAddressSelector } from "../../App/Selectors";
-import { setOpenToogle } from "../../App/ToogleSlice";
-import { addNewAddress, editAddress } from "../../App/UserSlice";
+import {
+  toogleStateSelector,
+  userAddressSelector,
+} from "../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 import AddNewAddress from "./Items/AddNewAddress";
 import AddressList from "./Items/AddressList";
+import * as thunk from "../../Thunk/userThunk";
 
 export default function UpdateAddressModal() {
   const indexEditAddress = useRef();
@@ -57,7 +60,7 @@ export default function UpdateAddressModal() {
         return toast.error("OOP! Error type phone number!");
       }
     }
-    dispatch(addNewAddress(inputNewAddress));
+    dispatch(thunk.addNewAddress(inputNewAddress));
     if (toogleState == "addAddress") {
       dispatch(setOpenToogle("updateAddress"));
     } else {
@@ -77,7 +80,7 @@ export default function UpdateAddressModal() {
       ...inputNewAddress,
       id: userAddress[indexEditAddress.current].id,
     };
-    dispatch(editAddress(temp));
+    dispatch(thunk.editAddress(temp));
     if (toogleState == "editAddress") {
       dispatch(setOpenToogle("updateAddress"));
     } else {

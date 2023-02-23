@@ -6,11 +6,11 @@ import CommentModal from "../Modal/CommentModal";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, addToLoveProduct } from "../../App/UserSlice";
 import { toast } from "react-hot-toast";
-import { setOpenToogle } from "../../App/ToogleSlice";
-import { userAuthorizedState } from "../../App/Selectors";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
+import { userAuthorizedState } from "../../redux/selectors/Selectors";
 import CustomToast from "../ToastNotification/CustomToast";
+import * as thunk from "../../Thunk/userThunk";
 
 export default function ProductOptions({
   productInfo,
@@ -63,7 +63,7 @@ export default function ProductOptions({
       const newCatalog = updateStock();
 
       dispatch(
-        addToCart({
+        thunk.addToCart({
           productId: productId,
           typeId: typeId,
           name: name,
@@ -90,7 +90,7 @@ export default function ProductOptions({
 
   const onAddLoveProduct = () => {
     dispatch(
-      addToLoveProduct({
+      thunk.addToLoveProduct({
         productId: productId,
         typeId: typeId,
         catalog: productInfo.preview.catalog,

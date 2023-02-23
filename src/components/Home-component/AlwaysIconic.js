@@ -2,8 +2,8 @@ import React, { memo, useEffect } from "react";
 import { Splide, SplideTrack, SplideSlide } from "@splidejs/react-splide";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { pageItem2Data } from "../../App/Selectors";
-import { pageFetchConditonItem2 } from "../../App/PageSlice";
+import { pageItem2Data } from "../../redux/selectors/Selectors";
+import { pageFetchConditonItem2 } from "../../Thunk/pageSlice";
 
 function AlwaysIconic() {
   const dispatch = useDispatch();

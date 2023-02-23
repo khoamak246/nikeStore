@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  TruckIcon,
-  CurrencyDollarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 import UpdateOrderNotification from "./UpdateOrderNotification";
 import { useSelector } from "react-redux";
-import { userNotificationSelector } from "../../../App/Selectors";
+import { userNotificationSelector } from "../../../redux/selectors/Selectors";
 
 export default function Notifications({ taskInfo }) {
   const userNotification = useSelector(userNotificationSelector);

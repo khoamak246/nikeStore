@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { userOrderListSelector } from "../../../App/Selectors";
+import { userOrderListSelector } from "../../../redux/selectors/Selectors";
 import OrderItems from "./OrderItems";
 
 export default function Orders({ taskInfo, setTaskInfo, setIdSelectedOrder }) {

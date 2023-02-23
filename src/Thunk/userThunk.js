@@ -1,84 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
-import { toast } from "react-hot-toast";
+import { Timestamp } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
-import { db } from "../Firebase/Config";
+import { toast } from "react-hot-toast";
+import * as services from "../Firebase/Services";
+import { setUserChangeInfo, setUserLogin } from "../redux/reducers/UserSlice";
 
-const initialState = {
-  authorized: false,
-  data: {
-    displayName: "",
-    userName: "",
-    password: "",
-    email: "",
-    avatar: "",
-    phoneNumber: "",
-    gender: "",
-    orderAddress: 0,
-    address: [],
-    cartItems: [],
-    orders: [],
-    loveProducts: [],
-    notifications: [],
-    lastLogin: "",
-  },
-};
-
-const UserSlice = createSlice({
-  initialState,
-  name: "user",
-  reducers: {
-    setUserLogin: (state, action) => {
-      const temp = { ...action.payload };
-      state.data = temp;
-      state.authorized = true;
-    },
-
-    setUserLogout: (state, action) => {
-      let defaultValue = {
-        displayName: "",
-        userName: "",
-        password: "",
-        email: "",
-        avatar: "",
-        phoneNumber: "",
-        gender: "",
-        orderAddress: 0,
-        address: [],
-        cartItems: [],
-        orders: [],
-        loveProducts: [],
-        notifications: [],
-        lastLogin: "",
-      };
-      state.data = defaultValue;
-      state.authorized = false;
-    },
-
-    setUserChangeInfo: (state, action) => {
-      let key = action.payload.key;
-      state.data[key] = action.payload.newValue;
-      if (action.payload.toast) {
-        toast.success(`${action.payload.toast}`, { duration: 1500 });
-      }
-    },
-
-    setEditOrderAddress: (state, action) => {
-      state.data.orderAddress = action.payload;
-    },
-  },
-});
-// ? okie
 export function userLogin(user) {
   return async function userLoginThunk(dispatch) {
     let lastLoginTime = Timestamp.fromDate(new Date());
     let displayUserName = "";
-    const userRef = doc(db, "user", user.username);
-    await setDoc(userRef, { lastLogin: lastLoginTime }, { merge: true });
-    const docUserSnap = await getDoc(userRef);
+    await services.Firebase_setDoc(
+      "user",
+      user.username,
+      "lastLogin",
+      lastLoginTime
+    );
+    const docUserSnap = await services.Firebase_getDoc("user", user.username);
     if (docUserSnap.exists()) {
       const userData = { ...docUserSnap.data(), orderAddress: 0 };
-      dispatch(UserSlice.actions.setUserLogin(userData));
+      dispatch(setUserLogin(userData));
       displayUserName = docUserSnap.data().displayName;
       let notifications = `Welcome back ${displayUserName}`;
       toast(
@@ -94,14 +33,11 @@ export function userLogin(user) {
   };
 }
 
-// ? okie
 export function addToCart(item) {
   return async function addToCartThunk(dispatch, getState) {
     let newCartItems = [];
     let username = getState().user.data.userName;
     let curCartItems = getState().user.data.cartItems;
-    const userRef = doc(db, "user", username);
-    const categoryRef = doc(db, "categoryPage", item.catalogName);
     const itemIndex = curCartItems.findIndex((cartItem) => {
       return cartItem.typeId === item.typeId && cartItem.size === item.size;
     });
@@ -136,10 +72,15 @@ export function addToCart(item) {
       newCartItems.push(temp);
     }
 
-    await setDoc(categoryRef, { items: item.newCatalog }, { merge: true });
-    await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
+    await services.Firebase_setDoc(
+      "categoryPage",
+      item.catalogName,
+      "items",
+      item.newCatalog
+    );
+    await services.Firebase_setDoc("user", username, "cartItems", newCartItems);
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "cartItems",
         newValue: newCartItems,
         toast: "Add to cart successfully",
@@ -148,53 +89,11 @@ export function addToCart(item) {
   };
 }
 
-// ? okie
-export function removeFromCart(item) {
-  return async function removeFromCartThunk(dispatch, getState) {
-    let newCartItems = [];
-    let username = getState().user.data.userName;
-    let curCartItems = getState().user.data.cartItems;
-    const userRef = doc(db, "user", username);
-    const categoryRef = doc(db, "categoryPage", item.catalogName);
-    const removeItem = curCartItems.filter((cartItem) => {
-      return cartItem.typeId !== item.typeId || cartItem.size !== item.size;
-    });
-
-    for (let i = 0; i < removeItem.length; i++) {
-      if (removeItem[i].catalog == item.catalog) {
-        newCartItems.push({
-          ...removeItem[i],
-          newCatalog: item.newUpdateProductInfo,
-        });
-      } else {
-        newCartItems.push(removeItem[i]);
-      }
-    }
-
-    await setDoc(
-      categoryRef,
-      { items: item.newUpdateProductInfo },
-      { merge: true }
-    );
-    await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
-    dispatch(
-      UserSlice.actions.setUserChangeInfo({
-        key: "cartItems",
-        newValue: newCartItems,
-        toast: "Removed successfully",
-      })
-    );
-  };
-}
-
-// ? okie
 export function increaseQuantity(item) {
   return async function increaseQuantityThunk(dispatch, getState) {
     let newCartItems = [];
     let curCartItems = getState().user.data.cartItems;
     let username = getState().user.data.userName;
-    const categoryRef = doc(db, "categoryPage", item.catalogName);
-    const userRef = doc(db, "user", username);
 
     const itemIndex = curCartItems.findIndex((cartItem) => {
       return cartItem.typeId === item.typeId && cartItem.size === item.size;
@@ -220,14 +119,15 @@ export function increaseQuantity(item) {
       }
     }
 
-    await setDoc(
-      categoryRef,
-      { items: item.newUpdateProductInfo },
-      { merge: true }
+    await services.Firebase_setDoc(
+      "categoryPage",
+      item.catalogName,
+      "items",
+      item.newUpdateProductInfo
     );
-    await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
+    await services.Firebase_setDoc("user", username, "cartItems", newCartItems);
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "cartItems",
         newValue: newCartItems,
       })
@@ -235,14 +135,11 @@ export function increaseQuantity(item) {
   };
 }
 
-// ? okie
 export function decreaseQuantity(item) {
   return async function decreaseQuantityThunk(dispatch, getState) {
     let newCartItems = [];
     let curCartItems = getState().user.data.cartItems;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
-    const categoryRef = doc(db, "categoryPage", item.catalogName);
 
     const itemIndex = curCartItems.findIndex((cartItem) => {
       return cartItem.typeId === item.typeId && cartItem.size === item.size;
@@ -267,14 +164,15 @@ export function decreaseQuantity(item) {
       }
     }
 
-    await setDoc(
-      categoryRef,
-      { items: item.newUpdateProductInfo },
-      { merge: true }
+    await services.Firebase_setDoc(
+      "categoryPage",
+      item.catalogName,
+      "items",
+      item.newUpdateProductInfo
     );
-    await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
+    await services.Firebase_setDoc("user", username, "cartItems", newCartItems);
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "cartItems",
         newValue: newCartItems,
       })
@@ -282,15 +180,50 @@ export function decreaseQuantity(item) {
   };
 }
 
-// ? okie
+export function removeFromCart(item) {
+  return async function removeFromCartThunk(dispatch, getState) {
+    let newCartItems = [];
+    let username = getState().user.data.userName;
+    let curCartItems = getState().user.data.cartItems;
+    const removeItem = curCartItems.filter((cartItem) => {
+      return cartItem.typeId !== item.typeId || cartItem.size !== item.size;
+    });
+
+    for (let i = 0; i < removeItem.length; i++) {
+      if (removeItem[i].catalog == item.catalog) {
+        newCartItems.push({
+          ...removeItem[i],
+          newCatalog: item.newUpdateProductInfo,
+        });
+      } else {
+        newCartItems.push(removeItem[i]);
+      }
+    }
+
+    await services.Firebase_setDoc(
+      "categoryPage",
+      item.catalogName,
+      "items",
+      item.newUpdateProductInfo
+    );
+    await services.Firebase_setDoc("user", username, "cartItems", newCartItems);
+    dispatch(
+      setUserChangeInfo({
+        key: "cartItems",
+        newValue: newCartItems,
+        toast: "Removed successfully",
+      })
+    );
+  };
+}
+
 export function clearCart() {
   return async function clearCartThunk(dispatch, getState) {
     let newCartItems = [];
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
-    await setDoc(userRef, { cartItems: newCartItems }, { merge: true });
+    await services.Firebase_setDoc("user", username, "cartItems", newCartItems);
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "cartItems",
         newValue: newCartItems,
       })
@@ -298,12 +231,10 @@ export function clearCart() {
   };
 }
 
-// ? okie
 export function addToLoveProduct(item) {
   return async function addToLoveProductThunk(dispatch, getState) {
     let newLoveProducts = [];
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
     let curLoveProducts = getState().user.data.loveProducts;
     const itemIndex = curLoveProducts.findIndex((val) => {
       return val.typeId === item.typeId;
@@ -316,9 +247,15 @@ export function addToLoveProduct(item) {
     } else {
       newLoveProducts = [...curLoveProducts, item];
     }
-    await setDoc(userRef, { loveProducts: newLoveProducts }, { merge: true });
+
+    await services.Firebase_setDoc(
+      "user",
+      username,
+      "loveProducts",
+      newLoveProducts
+    );
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "loveProducts",
         newValue: newLoveProducts,
         toast: "Add to favorite list successfully!",
@@ -327,20 +264,23 @@ export function addToLoveProduct(item) {
   };
 }
 
-// ? okie
 export function removeFromLoveProduct(item) {
   return async function removeFromLoveProductThunk(dispatch, getState) {
     let newLoveProducts;
     let curloveProducts = getState().user.data.loveProducts;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
     const removeItem = curloveProducts.filter((loveProduct) => {
       return loveProduct.typeId !== item.typeId;
     });
     newLoveProducts = removeItem;
-    await setDoc(userRef, { loveProducts: newLoveProducts }, { merge: true });
+    await services.Firebase_setDoc(
+      "user",
+      username,
+      "loveProducts",
+      newLoveProducts
+    );
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "loveProducts",
         newValue: newLoveProducts,
         toast: "Removed successfully!",
@@ -349,7 +289,6 @@ export function removeFromLoveProduct(item) {
   };
 }
 
-// ? okie
 export function addNewAddress(item) {
   return async function addNewAddressThunk(dispatch, getState) {
     let newAddressList;
@@ -357,7 +296,6 @@ export function addNewAddress(item) {
     let curAddressList = getState().user.data.address;
     let curPhoneNumber = getState().user.data.phoneNumber;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
 
     const temp = { ...item, id: uuid() };
 
@@ -368,16 +306,21 @@ export function addNewAddress(item) {
     }
 
     newAddressList = [...curAddressList, temp];
-    await setDoc(userRef, { address: newAddressList }, { merge: true });
-    await setDoc(userRef, { phoneNumber: newPhoneNumber }, { merge: true });
+    await services.Firebase_setDoc("user", username, "address", newAddressList);
+    await services.Firebase_setDoc(
+      "user",
+      username,
+      "phoneNumber",
+      newPhoneNumber
+    );
     await dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "address",
         newValue: newAddressList,
       })
     );
     await dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "phoneNumber",
         newValue: newPhoneNumber,
       })
@@ -385,13 +328,11 @@ export function addNewAddress(item) {
   };
 }
 
-// ? okie
 export function editAddress(item) {
   return async function editAddressThunk(dispatch, getState) {
     let newAddressList = [];
     let curAddressList = getState().user.data.address;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
 
     const itemIndex = curAddressList.findIndex((address) => {
       return address.id == item.id;
@@ -405,9 +346,9 @@ export function editAddress(item) {
       }
     }
 
-    await setDoc(userRef, { address: newAddressList }, { merge: true });
+    await services.Firebase_setDoc("user", username, "address", newAddressList);
     await dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "address",
         newValue: newAddressList,
       })
@@ -416,7 +357,6 @@ export function editAddress(item) {
   };
 }
 
-// ? okie
 export function conFirmOrder(item) {
   return async function conFirmOrderThunk(dispatch, getState) {
     let newOrdersList;
@@ -424,7 +364,6 @@ export function conFirmOrder(item) {
     let curOrdersList = getState().user.data.orders;
     let curNotificationList = getState().user.data.notifications;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
 
     let idOrder = uuid();
     let time = Timestamp.fromDate(new Date());
@@ -444,20 +383,21 @@ export function conFirmOrder(item) {
       ...curNotificationList,
     ];
 
-    await setDoc(userRef, { orders: newOrdersList }, { merge: true });
-    await setDoc(
-      userRef,
-      { notifications: newNotificationList },
-      { merge: true }
+    await services.Firebase_setDoc("user", username, "orders", newOrdersList);
+    await services.Firebase_setDoc(
+      "user",
+      username,
+      "notifications",
+      newNotificationList
     );
     await dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "orders",
         newValue: newOrdersList,
       })
     );
     await dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "notifications",
         newValue: newNotificationList,
       })
@@ -477,21 +417,20 @@ export function conFirmOrder(item) {
   };
 }
 
-// ? okie
 export function addNotifications(item) {
   return async function addNotificationsThunk(dispatch, getState) {
     let curNotificationsList = getState().user.data.notifications;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
 
     let newNotificationsList = [item, ...curNotificationsList];
-    await setDoc(
-      userRef,
-      { notifications: newNotificationsList },
-      { merge: true }
+    await services.Firebase_setDoc(
+      "user",
+      username,
+      "notifications",
+      newNotificationsList
     );
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "notifications",
         newValue: newNotificationsList,
       })
@@ -499,14 +438,12 @@ export function addNotifications(item) {
   };
 }
 
-// ? okie
 export function userChangePassword(item) {
   return async function userChangePassWordThunk(dispatch, getState) {
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
-    await setDoc(userRef, { password: item }, { merge: true });
+    await services.Firebase_setDoc("user", username, "password", item);
     dispatch(
-      UserSlice.actions.setUserChangeInfo({
+      setUserChangeInfo({
         key: "password",
         newValue: item,
         toast: `Password changed successfully!`,
@@ -515,19 +452,13 @@ export function userChangePassword(item) {
   };
 }
 
-// ? okie
 export function userChangeInfo(item) {
   return async function userChangeInfoThunk(dispatch, getState) {
     let newValue = item.value;
     let key = item.key;
     let username = getState().user.data.userName;
-    const userRef = doc(db, "user", username);
-    await setDoc(userRef, { [key]: newValue }, { merge: true });
-    dispatch(
-      UserSlice.actions.setUserChangeInfo({ key, newValue, toast: item.toast })
-    );
+
+    await services.Firebase_setDoc("user", username, key, newValue);
+    dispatch(setUserChangeInfo({ key, newValue, toast: item.toast }));
   };
 }
-
-export const { setUserLogout, setEditOrderAddress } = UserSlice.actions;
-export default UserSlice.reducer;

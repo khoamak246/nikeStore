@@ -5,10 +5,10 @@ import {
   toogleStateSelector,
   userAddressSelector,
   userOrderAddressSelector,
-} from "../../../App/Selectors";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+} from "../../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
 import { toast } from "react-hot-toast";
-import { setEditOrderAddress } from "../../../App/UserSlice";
+import { setEditOrderAddress } from "../../../redux/reducers/UserSlice";
 
 export default function AddressList({ onGetValueEditAddress }) {
   const userAddress = useSelector(userAddressSelector);

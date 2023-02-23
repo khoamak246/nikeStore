@@ -1,8 +1,11 @@
 import React, { useMemo } from "react";
 import { ChevronDoubleLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleStateSelector, userCartSelector } from "../../../App/Selectors";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+import {
+  toogleStateSelector,
+  userCartSelector,
+} from "../../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
 
 export default function ItemCount() {
   const cartItems = useSelector(userCartSelector);

@@ -2,8 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ImpactStories from "../components/About-Component/ImpactStories";
 import { useDispatch, useSelector } from "react-redux";
-import { pageFetch } from "../App/PageSlice";
-import { pageDataSelector } from "../App/Selectors";
+import { pageDataSelector } from "../redux/selectors/Selectors";
+import { pageFetch } from "../Thunk/pageSlice";
 
 export default function About() {
   const [scroll, setScroll] = useState(false);

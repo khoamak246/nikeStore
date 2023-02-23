@@ -5,7 +5,7 @@ import { useEffect, useMemo } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import UnknowPage from "./Page/UnknowPage.js";
 import { useSelector } from "react-redux";
-import { toogleStateSelector } from "./App/Selectors.js";
+import { toogleStateSelector } from "./redux/selectors/Selectors";
 
 function App() {
   let currentLocation = useLocation();

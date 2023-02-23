@@ -9,9 +9,9 @@ import {
 import SquarePen from "../../../assets/SquarePen.png";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userDataSelector } from "../../../App/Selectors";
+import { userDataSelector } from "../../../redux/selectors/Selectors";
 import { toast } from "react-hot-toast";
-import { userChangeInfo } from "../../../App/UserSlice";
+import * as thunk from "../../../Thunk/userThunk";
 
 export default function AccountInfo({ taskInfo }) {
   const dispatch = useDispatch();
@@ -126,7 +126,7 @@ export default function AccountInfo({ taskInfo }) {
   const dispatchChangeValue = (charNumber, toastValue) => {
     if (checkValidate(charNumber)) {
       return dispatch(
-        userChangeInfo({
+        thunk.userChangeInfo({
           key: curInputValue.type,
           value: newInputValue,
           toast: toastValue,
@@ -145,7 +145,7 @@ export default function AccountInfo({ taskInfo }) {
 
   const onChangeGengerRadio = (e) => {
     dispatch(
-      userChangeInfo({
+      thunk.userChangeInfo({
         key: "gender",
         value: e.target.value,
         toast: "Gender changed successfully!",
@@ -168,7 +168,7 @@ export default function AccountInfo({ taskInfo }) {
         case "email":
           checkValidateEmail()
             ? dispatch(
-                userChangeInfo({
+                thunk.userChangeInfo({
                   key: curInputValue.type,
                   value: newInputValue,
                   toast: "Email changed successfully",

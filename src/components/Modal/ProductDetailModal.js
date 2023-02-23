@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleStateSelector } from "../../App/Selectors";
-import { setOpenToogle } from "../../App/ToogleSlice";
-export default function ProductDetailModal({ toogle, setToogle, info }) {
+import { toogleStateSelector } from "../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
+export default function ProductDetailModal({ info }) {
   const { name, price, avatar, detail, show } = info;
   const toogleState = useSelector(toogleStateSelector);
   const dispatch = useDispatch();

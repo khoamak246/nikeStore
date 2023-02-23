@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toogleStateSelector } from "../../App/Selectors";
-import { setOpenToogle } from "../../App/ToogleSlice";
+import { toogleStateSelector } from "../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 import { Rating } from "../ProductDetail-Component";
 
 export default function CommentModal() {

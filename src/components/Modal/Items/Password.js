@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { userPasswordSelector } from "../../../App/Selectors";
-import { userChangePassword } from "../../../App/UserSlice";
+import { userPasswordSelector } from "../../../redux/selectors/Selectors";
+import * as thunk from "../../../Thunk/userThunk";
 
 export default function Password({ taskInfo, setDisableToggle }) {
   const dispatch = useDispatch();
@@ -79,7 +79,7 @@ export default function Password({ taskInfo, setDisableToggle }) {
       setDisableToggle(true);
     }, 2000);
 
-    return dispatch(userChangePassword(inputChangePassword.newPassword));
+    return dispatch(thunk.userChangePassword(inputChangePassword.newPassword));
   };
 
   return (

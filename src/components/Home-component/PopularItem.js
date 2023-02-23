@@ -4,8 +4,8 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { pageItem1Data } from "../../App/Selectors";
-import { pageFetchConditonItem1 } from "../../App/PageSlice";
+import { pageItem1Data } from "../../redux/selectors/Selectors";
+import { pageFetchConditonItem1 } from "../../Thunk/pageSlice";
 function PopularItem() {
   const dispatch = useDispatch();
   const pageItem = useSelector(pageItem1Data);

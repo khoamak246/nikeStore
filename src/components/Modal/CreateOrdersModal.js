@@ -5,10 +5,9 @@ import {
   userAddressSelector,
   userCartSelector,
   userOrderAddressSelector,
-} from "../../App/Selectors";
-import { clearCart, conFirmOrder } from "../../App/UserSlice";
-import { setOpenToogle } from "../../App/ToogleSlice";
-import { v4 as uuid } from "uuid";
+} from "../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
+import * as thunk from "../../Thunk/userThunk";
 
 export default function CreateOrdersModal() {
   const [disableCloseButton, setDisableCloseButton] = useState(true);
@@ -19,7 +18,7 @@ export default function CreateOrdersModal() {
 
   const onConfirmOrder = () => {
     dispatch(
-      conFirmOrder({
+      thunk.conFirmOrder({
         name: userAddress[orderAddress].name,
         phoneNumber: userAddress[orderAddress].phoneNumber,
         address: userAddress[orderAddress].address,
@@ -32,7 +31,7 @@ export default function CreateOrdersModal() {
     setDisableCloseButton(false);
     setTimeout(() => {
       dispatch(setOpenToogle(""));
-      dispatch(clearCart());
+      dispatch(thunk.clearCart());
       setDisableCloseButton(true);
     }, 4000);
   };

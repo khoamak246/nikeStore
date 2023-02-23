@@ -2,7 +2,7 @@ import React from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setOpenToogle } from "../../App/ToogleSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 export default function CustomToast({ title, text, action, value, btn, id }) {
   const dispatch = useDispatch();

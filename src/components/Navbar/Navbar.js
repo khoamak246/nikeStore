@@ -19,10 +19,10 @@ import {
   userCartSelector,
   toogleStateSelector,
   userAuthorizedState,
-} from "../../App/Selectors";
+} from "../../redux/selectors/Selectors";
 import SearchModal from "../Modal/SearchModal";
 import { useDispatch } from "react-redux";
-import { setOpenToogle } from "../../App/ToogleSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 import UpdateAddressModal from "../Modal/UpdateAddressModal";
 import { toast } from "react-hot-toast";
 import CustomToast from "../ToastNotification/CustomToast";

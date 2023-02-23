@@ -10,8 +10,11 @@ import {
 import { useState, useEffect } from "react";
 import { useTransitions } from "../Hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { pageFetch } from "../App/PageSlice";
-import { pageDataLoadingState, pageDataSelector } from "../App/Selectors";
+import {
+  pageDataLoadingState,
+  pageDataSelector,
+} from "../redux/selectors/Selectors";
+import * as thunk from "../Thunk/pageSlice";
 
 function Home() {
   const [panelScale, setPanelScale] = useState(false);
@@ -21,7 +24,7 @@ function Home() {
   const [panel, contentEvent, contentPanel, membership, introduce] = dataPage;
 
   useEffect(() => {
-    dispatch(pageFetch("homePage"));
+    dispatch(thunk.pageFetch("homePage"));
   }, []);
 
   const handleScalePanel = () => {

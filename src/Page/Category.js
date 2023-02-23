@@ -10,8 +10,11 @@ import { useTransitions } from "../Hooks";
 import { useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { pageDataLoadingState, pageDataSelector } from "../App/Selectors";
-import { pageFetch, pageFetchConditon } from "../App/PageSlice";
+import {
+  pageDataLoadingState,
+  pageDataSelector,
+} from "../redux/selectors/Selectors";
+import * as thunk from "../Thunk/pageSlice";
 
 export default function Category() {
   const param = useParams();
@@ -30,9 +33,9 @@ export default function Category() {
         operator: "==",
         compareValue: param.catalogName,
       };
-      dispatch(pageFetchConditon("categoryPage", condition));
+      dispatch(thunk.pageFetchConditon("categoryPage", condition));
     } else {
-      dispatch(pageFetch("categoryPage"));
+      dispatch(thunk.pageFetch("categoryPage"));
     }
   }, [param]);
 

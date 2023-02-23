@@ -8,8 +8,11 @@ import { Navigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useTransitions } from "../Hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { pageDataLoadingState, pageDataSelector } from "../App/Selectors";
-import { pageFetchConditon } from "../App/PageSlice";
+import {
+  pageDataLoadingState,
+  pageDataSelector,
+} from "../redux/selectors/Selectors";
+import { pageFetchConditon } from "../Thunk/pageSlice";
 
 export default function ProductDetail() {
   const param = useParams();

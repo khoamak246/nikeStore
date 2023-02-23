@@ -1,8 +1,8 @@
 import React from "react";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/outline";
 import { useSelector, useDispatch } from "react-redux";
-import { userLoveProductSelector } from "../../../App/Selectors";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+import { userLoveProductSelector } from "../../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
 
 export default function LoveProductCount() {
   const loveProduct = useSelector(userLoveProductSelector);

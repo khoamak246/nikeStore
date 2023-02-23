@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { toogleStateSelector } from "../../../App/Selectors";
+import { toogleStateSelector } from "../../../redux/selectors/Selectors";
 
 export default function AddNewAddress({ inputNewAddress, setInputNewAddress }) {
   const { name, phoneNumber, address } = inputNewAddress;

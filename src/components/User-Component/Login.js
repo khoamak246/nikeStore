@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../Firebase/Config";
 import { useDispatch } from "react-redux";
-import { userLogin } from "../../App/UserSlice";
+import { userLogin } from "../../Thunk/userThunk";
 
 export default function Login() {
   const dispatch = useDispatch();

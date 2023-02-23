@@ -2,7 +2,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { toogleStateSelector } from "../../../App/Selectors";
+import { toogleStateSelector } from "../../../redux/selectors/Selectors";
 import { db } from "../../../Firebase/Config";
 import SearchList from "./SearchList";
 
@@ -51,8 +51,6 @@ export default function SearchResult({ navState, search }) {
 
     return () => clearTimeout(timeoutid);
   }, [changeWidth, resultArr, search]);
-
-  console.log(resultArr);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import ItemCount from "./ItemCount";
 import SideListEmty from "./SideListEmty";
 import SideListItem from "./SideListItem";
@@ -7,12 +7,12 @@ import {
   toogleStateSelector,
   userAddressSelector,
   userCartSelector,
-} from "../../../App/Selectors";
+} from "../../../redux/selectors/Selectors";
 import CreateOrdersModal from "../../Modal/CreateOrdersModal.js";
-import { setOpenToogle } from "../../../App/ToogleSlice";
 import { toast } from "react-hot-toast";
 import CustomToast from "../../ToastNotification/CustomToast";
-import { setEditOrderAddress } from "../../../App/UserSlice";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
+import { setEditOrderAddress } from "../../../redux/reducers/UserSlice";
 
 export default function Cart() {
   const cartItems = useSelector(userCartSelector);

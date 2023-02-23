@@ -2,8 +2,8 @@ import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import emptybag from "../../../assets/emptybag.png";
 import { useSelector, useDispatch } from "react-redux";
-import { toogleStateSelector } from "../../../App/Selectors";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+import { toogleStateSelector } from "../../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
 
 export default function SideListEmty() {
   const toogleState = useSelector(toogleStateSelector);

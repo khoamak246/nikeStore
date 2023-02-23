@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useDispatch } from "react-redux";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchList({ val }) {

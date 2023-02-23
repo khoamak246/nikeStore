@@ -12,9 +12,9 @@ import {
   toogleStateSelector,
   userAvatarSelector,
   userDisplayNameSelector,
-} from "../../../App/Selectors";
-import { setOpenToogle } from "../../../App/ToogleSlice";
-import { setUserLogout } from "../../../App/UserSlice";
+} from "../../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
+import { setUserLogout } from "../../../redux/reducers/UserSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function Menu() {

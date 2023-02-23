@@ -1,12 +1,8 @@
 import React from "react";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  decreaseQuantity,
-  increaseQuantity,
-  removeFromCart,
-} from "../../../App/UserSlice";
+import { useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
+import * as thunk from "../../../Thunk/userThunk";
 
 export default function SideListItem({ item }) {
   const {
@@ -70,7 +66,7 @@ export default function SideListItem({ item }) {
   const onRemoveProduct = () => {
     const newUpdateProductInfo = handleUpdateProduct("remove");
     dispatch(
-      removeFromCart({
+      thunk.removeFromCart({
         catalogName,
         typeId,
         size,
@@ -83,7 +79,7 @@ export default function SideListItem({ item }) {
     const newUpdateProductInfo = handleUpdateProduct("increase");
     if (stock > 0) {
       dispatch(
-        increaseQuantity({
+        thunk.increaseQuantity({
           catalogName,
           typeId,
           size,
@@ -99,7 +95,7 @@ export default function SideListItem({ item }) {
     const newUpdateProductInfo = handleUpdateProduct("decrease");
 
     dispatch(
-      decreaseQuantity({
+      thunk.decreaseQuantity({
         catalogName,
         typeId,
         size,

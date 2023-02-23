@@ -1,16 +1,16 @@
 import { HeartIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { removeFromLoveProduct } from "../../../App/UserSlice";
-import { setOpenToogle } from "../../../App/ToogleSlice";
+import { setOpenToogle } from "../../../redux/reducers/ToogleSlice";
+import * as thunk from "../../../Thunk/userThunk";
 
 export default function LoveProductList({ item }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const onRemoveFromLoveProduct = () => {
     dispatch(
-      removeFromLoveProduct({
+      thunk.removeFromLoveProduct({
         typeId: item.typeId,
       })
     );

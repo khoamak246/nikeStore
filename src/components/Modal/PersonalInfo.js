@@ -14,8 +14,8 @@ import Orders from "./Items/Orders";
 import OrderDetail from "./Items/OrderDetail";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { toogleStateSelector } from "../../App/Selectors";
-import { setOpenToogle } from "../../App/ToogleSlice";
+import { toogleStateSelector } from "../../redux/selectors/Selectors";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 export default function PersonalInfo() {
   const [disableToogle, setDisableToggle] = useState(true);
