@@ -2,11 +2,14 @@ import React, { useEffect } from "react";
 import { Splide, SplideTrack, SplideSlide } from "@splidejs/react-splide";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { memo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { pageItem1Data } from "../../redux/selectors/Selectors";
 import { pageFetchConditonItem1 } from "../../Thunk/pageSlice";
+import { setLoadingState } from "../../redux/reducers/PageSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 function PopularItem() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const pageItem = useSelector(pageItem1Data);
   useEffect(() => {
@@ -47,16 +50,14 @@ function PopularItem() {
                     <SplideSlide
                       className="cursor-pointer relative"
                       key={index}
+                      onClick={() => {
+                        dispatch(setLoadingState());
+                        dispatch(setOpenToogle(""));
+                        navigate(
+                          `/productdetail/${cur.preview.catalog}/${cur.id}/${cur.preview.typeId}`
+                        );
+                      }}
                     >
-                      {cur.id && cur.preview.typeId ? (
-                        <Link
-                          to={`/productdetail/${cur.preview.catalog}/${cur.id}/${cur.preview.typeId}`}
-                          className="absolute top-0 left-0 w-full h-full"
-                        ></Link>
-                      ) : (
-                        ""
-                      )}
-
                       <img
                         src={cur.type[0].img[0].url}
                         alt={`popularItem1-Img${index}`}

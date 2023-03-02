@@ -31,6 +31,7 @@ export default function BecomeMember({ membership }) {
                 <a
                   href={cur.url}
                   className="absolute top-0 left-0 w-full h-full z-10"
+                  target="_blank"
                 ></a>
                 <img src={cur.img} alt="becomMember-img1" className="w-full" />
                 <div className="absolute bottom-5 left-0 w-full pl-10 lg:pl-0 z-0">

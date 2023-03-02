@@ -8,7 +8,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
-import { userAuthorizedState } from "../../redux/selectors/Selectors";
+import {
+  toogleStateSelector,
+  userAuthorizedState,
+} from "../../redux/selectors/Selectors";
 import CustomToast from "../ToastNotification/CustomToast";
 import * as thunk from "../../Thunk/userThunk";
 
@@ -22,6 +25,7 @@ export default function ProductOptions({
   const navigate = useNavigate();
   const authorizedState = useSelector(userAuthorizedState);
   const dispatch = useDispatch();
+  const toogleState = useSelector(toogleStateSelector);
   const { name, forGender, price, overview, style, type, detail } = productInfo;
   const [selectedProduct, setSelectedProduct] = useState();
   const [toogleComment, setToogleComment] = useState(false);
@@ -59,34 +63,35 @@ export default function ProductOptions({
   };
 
   const onAddCart = () => {
-    if (slelectSize && slelectSize.stock > 0) {
-      const newCatalog = updateStock();
+    if (slelectSize) {
+      if (slelectSize?.stock > 0) {
+        const newCatalog = updateStock();
 
-      dispatch(
-        thunk.addToCart({
-          productId: productId,
-          typeId: typeId,
-          name: name,
-          img: selectedProduct.avatar,
-          forGender: forGender,
-          price: price,
-          size: slelectSize.type,
-          catalogName: param.catalogName,
-          newCatalog: newCatalog,
-          stock: slelectSize.stock - 1,
-        })
-      );
+        dispatch(
+          thunk.addToCart({
+            productId: productId,
+            typeId: typeId,
+            name: name,
+            img: selectedProduct.avatar,
+            forGender: forGender,
+            price: price,
+            size: slelectSize.type,
+            catalogName: param.catalogName,
+            newCatalog: newCatalog,
+            stock: slelectSize.stock - 1,
+          })
+        );
+      } else if (slelectSize?.stock == 0) {
+        toast.error(`OOP! This product sold out!`, { duration: 1500 });
+      }
     } else {
-      toast.error(
-        `${
-          slelectSize.stock > 0
-            ? "OOP! You forgot to pick your size"
-            : "OOP! This product sold out!"
-        } `,
-        { duration: 1500 }
-      );
+      toast.error(`OOP! You forgot pick your size!`, { duration: 1500 });
     }
   };
+
+  useEffect(() => {
+    toogleState !== "" && setSlelectSize();
+  }, [toogleState]);
 
   const onAddLoveProduct = () => {
     dispatch(

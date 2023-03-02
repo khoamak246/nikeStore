@@ -13,13 +13,13 @@ export default function LoveProduct() {
   const toogleState = useSelector(toogleStateSelector);
   return (
     <>
-      <div className="flex w-10/12 m-auto justify-end sm:w-full">
+      <div className="flex w-10/12 m-auto justify-end sm:w-full z-[200]">
         <div
           className={`${
             toogleState == "like"
               ? "w-[30%] sm:w-full lg:w-[40%] h-auto px-3 py-5"
               : "w-0 h-0"
-          }  top-[9vh] flex flex-col gap-5 bg-white shadow-md shadow-slate-400 fixed z-[100] rounded-lg overflow-hidden transition-all duration-300`}
+          }  top-[9vh] flex flex-col gap-5 bg-white shadow-md shadow-slate-400 fixed rounded-lg overflow-hidden transition-all duration-300 z-[200]`}
         >
           <LoveProductCount />
           {loveProduct.length > 0 ? (

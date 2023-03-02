@@ -50,23 +50,13 @@ export function addToCart(item) {
           editValue.stock = item.stock;
           editValue.newCatalog = item.newCatalog;
           newCartItems.push(editValue);
-        } else if (curCartItems[i].catalog == item.catalog) {
-          newCartItems.push({
-            ...curCartItems[i],
-            newCatalog: item.newCatalog,
-          });
+        } else {
+          newCartItems.push(curCartItems[i]);
         }
       }
     } else {
       for (let i = 0; i < curCartItems.length; i++) {
-        if (curCartItems[i].catalog == item.catalog) {
-          newCartItems.push({
-            ...curCartItems[i],
-            newCatalog: item.newCatalog,
-          });
-        } else {
-          newCartItems.push(curCartItems[i]);
-        }
+        newCartItems.push(curCartItems[i]);
       }
       const temp = { ...item, cartQuantity: 1 };
       newCartItems.push(temp);
@@ -105,17 +95,16 @@ export function increaseQuantity(item) {
     editValue.newCatalog = item.newUpdateProductInfo;
     for (let i = 0; i < curCartItems.length; i++) {
       if (i == itemIndex) {
-        console.log("in1");
         newCartItems.push(editValue);
-      } else if (curCartItems[i].catalog == item.catalog) {
-        console.log("in2");
-        newCartItems.push({
-          ...curCartItems[i],
-          newCatalog: item.newUpdateProductInfo,
-        });
       } else {
-        console.log("in3");
-        newCartItems.push(curCartItems[i]);
+        if (curCartItems[i].catalogName == item.catalog) {
+          newCartItems.push({
+            ...curCartItems[i],
+            newCatalog: item.newUpdateProductInfo,
+          });
+        } else {
+          newCartItems.push(curCartItems[i]);
+        }
       }
     }
 
@@ -154,13 +143,13 @@ export function decreaseQuantity(item) {
         editValue.stock += 1;
         editValue.newCatalog = item.newUpdateProductInfo;
         newCartItems.push(editValue);
-      } else if (curCartItems[i].catalog == item.catalog) {
+      } else if (curCartItems[i].catalogName == item.catalog) {
         newCartItems.push({
           ...curCartItems[i],
           newCatalog: item.newUpdateProductInfo,
         });
       } else {
-        newCartItems.push(...curCartItems[i]);
+        newCartItems.push(curCartItems[i]);
       }
     }
 
@@ -190,7 +179,8 @@ export function removeFromCart(item) {
     });
 
     for (let i = 0; i < removeItem.length; i++) {
-      if (removeItem[i].catalog == item.catalog) {
+      console.log(removeItem[i].catalogName, item.catalog);
+      if (removeItem[i].catalogName == item.catalog) {
         newCartItems.push({
           ...removeItem[i],
           newCatalog: item.newUpdateProductInfo,

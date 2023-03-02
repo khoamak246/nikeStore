@@ -2,10 +2,14 @@ import { ShoppingBagIcon, StarIcon } from "@heroicons/react/24/solid";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLoadingState } from "../../redux/reducers/PageSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 export default function Sales({ endpoint }) {
   const { title, items } = endpoint;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   return (
     <>
       <div className="nike-container">
@@ -51,6 +55,8 @@ export default function Sales({ endpoint }) {
                       type="button"
                       className="bg-white/90 blur-effect-theme button-theme p-0.5 shadow shadow-sky-200"
                       onClick={() => {
+                        dispatch(setLoadingState());
+                        dispatch(setOpenToogle(""));
                         navigate(
                           `/productdetail/${item.preview.catalog}/${item.preview.productId}/${item.preview.typeId}`
                         );
@@ -62,6 +68,8 @@ export default function Sales({ endpoint }) {
                       type="button"
                       className="bg-white/90 blur-effect-theme button-theme px-2 py-1 shadow shadow-sky-200 text-sm text-black "
                       onClick={() => {
+                        dispatch(setLoadingState());
+                        dispatch(setOpenToogle(""));
                         navigate(
                           `/productdetail/${item.preview.catalog}/${item.preview.productId}/${item.preview.typeId}`
                         );
@@ -77,6 +85,8 @@ export default function Sales({ endpoint }) {
                     alt={`img/item-img/${item.id}`}
                     className={`transitions-theme hover:-rotate-12 h-36 w-64 scale-x-[-1]`}
                     onClick={() => {
+                      dispatch(setLoadingState());
+                      dispatch(setOpenToogle(""));
                       navigate(
                         `/productdetail/${item.preview.catalog}/${item.preview.productId}/${item.preview.typeId}`
                       );

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { toogleStateSelector } from "../../../redux/selectors/Selectors";
 import { db } from "../../../Firebase/Config";
 import SearchList from "./SearchList";
+import { Firebase_getDocs } from "../../../Firebase/Services";
 
 export default function SearchResult({ navState, search }) {
   const [changeWidth, setChangeWidth] = useState(false);
@@ -16,18 +17,14 @@ export default function SearchResult({ navState, search }) {
     let timeoutid;
     if (search.length > 0) {
       timeoutid = setTimeout(async () => {
-        const resultArr = [];
         let searchInput = search.toLowerCase().split(" ").join("");
+        const condition = {
+          fieldName: "key",
+          operator: "array-contains",
+          compareValue: searchInput,
+        };
 
-        const searchRef = query(
-          collection(db, "searchKeyword"),
-          where("key", "array-contains", searchInput)
-        );
-        const searchDoc = await getDocs(searchRef);
-
-        searchDoc.forEach((doc) => {
-          resultArr.push(doc.data());
-        });
+        const resultArr = await Firebase_getDocs("searchKeyword", condition);
         setResultArr(resultArr);
         setChangeWidth(true);
       }, 500);

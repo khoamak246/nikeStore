@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Splide, SplideTrack, SplideSlide } from "@splidejs/react-splide";
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 export default function RecommendProduct({ recommendList, productId }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [recomList, setRecomList] = useState(recommendList.items);
   useEffect(() => {
     let newList = [];
-    recommendList.items.forEach((val) => {
+    recommendList?.items?.forEach((val) => {
       if (productId !== val.id) {
         newList = [...newList, val];
       }
@@ -39,28 +42,33 @@ export default function RecommendProduct({ recommendList, productId }) {
           {recomList.map((val, index) => {
             let ramdomIndex = Math.floor(Math.random() * val.type.length);
             return (
-              <SplideSlide key={index}>
+              <SplideSlide
+                key={index}
+                onClick={() => {
+                  dispatch(setOpenToogle(""));
+                  navigate(
+                    `/productdetail/${recommendList.key}/${val.id}/${val.type[ramdomIndex].id}`
+                  );
+                }}
+                className="cursor-pointer"
+              >
                 <div className="w-full">
-                  <Link
-                    to={`/productdetail/${recommendList.key}/${val.id}/${val.type[ramdomIndex].id}`}
-                  >
-                    <div className="w-full flex flex-col gap-5">
-                      <div className="w-full">
-                        <img
-                          src={val.type[ramdomIndex].img[0].url}
-                          alt={`recommend-img-${index}`}
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-[1rem]">{val.name}</p>
-                        <p className="text-[0.9rem] text-[#757575]">
-                          {val.forGender}'s Training Shoes
-                        </p>
-                        <p className="mt-4">${val.price}</p>
-                      </div>
+                  <div className="w-full flex flex-col gap-5">
+                    <div className="w-full">
+                      <img
+                        src={val.type[ramdomIndex].img[0].url}
+                        alt={`recommend-img-${index}`}
+                        className="w-full"
+                      />
                     </div>
-                  </Link>
+                    <div>
+                      <p className="text-[1rem]">{val.name}</p>
+                      <p className="text-[0.9rem] text-[#757575]">
+                        {val.forGender}'s Training Shoes
+                      </p>
+                      <p className="mt-4">${val.price}</p>
+                    </div>
+                  </div>
                 </div>
               </SplideSlide>
             );

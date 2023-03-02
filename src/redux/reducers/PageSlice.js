@@ -1,12 +1,3 @@
-import { db } from "../../Firebase/Config";
-import {
-  onSnapshot,
-  collection,
-  query,
-  orderBy,
-  where,
-} from "firebase/firestore";
-
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   loadingState: "idle",
@@ -19,6 +10,9 @@ export const PageSlice = createSlice({
   initialState,
   name: "page",
   reducers: {
+    setLoadingState(state, action) {
+      state.loadingState = "idle";
+    },
     setSaveDataPage: (state, action) => {
       if (action.payload.page !== "homePage") {
         state.pageItem1 = { loadingState: "idle", item: [] };
@@ -38,6 +32,10 @@ export const PageSlice = createSlice({
   },
 });
 
-export const { setSaveDataPage, setSaveFirtItemData, setSaveSecondItemData } =
-  PageSlice.actions;
+export const {
+  setLoadingState,
+  setSaveDataPage,
+  setSaveFirtItemData,
+  setSaveSecondItemData,
+} = PageSlice.actions;
 export default PageSlice.reducer;

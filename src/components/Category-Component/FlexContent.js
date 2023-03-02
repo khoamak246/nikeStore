@@ -1,8 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { setLoadingState } from "../../redux/reducers/PageSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 export default function FlexContent({ ifExists, endpoint }) {
   const { title, heading, text, img, btn } = endpoint;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   return (
     <>
       <div
@@ -18,18 +23,25 @@ export default function FlexContent({ ifExists, endpoint }) {
             {title}
           </h1>
           <p className="xl:text-sm my-4 text-slate-900">{text}</p>
-          <Link
-            to={ifExists ? "/incoming/NOCTA" : "/incoming/NikeLeBron"}
-            className="flex items-center"
-            role="button"
+
+          <button
+            type="button"
+            className="button-theme bg-slate-900 shadow-slate-900 text-slate-100 py-1.5 w-[50%]"
+            onClick={() => {
+              let href;
+              if (ifExists) {
+                href = "/incoming/NOCTA";
+              } else {
+                href = "/incoming/NikeLeBron";
+              }
+              dispatch(setLoadingState());
+              dispatch(setOpenToogle(""));
+              navigate(href);
+            }}
           >
-            <button
-              type="button"
-              className="button-theme bg-slate-900 shadow-slate-900 text-slate-100 py-1.5"
-            >
-              {btn}
-            </button>
-          </Link>
+            {btn}
+          </button>
+          {/* </Link> */}
         </div>
         <div className="flex items-center justify-center max-w-xl relative lg:max-w-none w-full">
           <img
@@ -40,6 +52,17 @@ export default function FlexContent({ ifExists, endpoint }) {
                 ? "h-60 lg:h-56 md:h-52 sm:h-44 xsm:h-36 rotate-6 hover:-rotate-12"
                 : "h-72 lg:h-64 md:h-60 sm:h-48 xsm:h-40 rotate-[19deg] hover:rotate-12"
             }`}
+            onClick={() => {
+              let href;
+              if (ifExists) {
+                href = "/incoming/NOCTA";
+              } else {
+                href = "/incoming/NikeLeBron";
+              }
+              dispatch(setLoadingState());
+              dispatch(setOpenToogle(""));
+              navigate(href);
+            }}
           />
         </div>
       </div>

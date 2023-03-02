@@ -1,11 +1,14 @@
 import React, { memo, useEffect } from "react";
 import { Splide, SplideTrack, SplideSlide } from "@splidejs/react-splide";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { pageItem2Data } from "../../redux/selectors/Selectors";
 import { pageFetchConditonItem2 } from "../../Thunk/pageSlice";
+import { setLoadingState } from "../../redux/reducers/PageSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 function AlwaysIconic() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const itemData = useSelector(pageItem2Data);
   useEffect(() => {
@@ -47,13 +50,14 @@ function AlwaysIconic() {
                     <SplideSlide
                       className="cursor-pointer relative"
                       key={index}
+                      onClick={() => {
+                        dispatch(setLoadingState());
+                        dispatch(setOpenToogle(""));
+                        navigate(
+                          `/productdetail/${cur.preview.catalog}/${cur.id}/${cur.preview.typeId}`
+                        );
+                      }}
                     >
-                      {cur.preview.catalog && cur.preview.typeId && (
-                        <Link
-                          to={`/productdetail/${cur.preview.catalog}/${cur.id}/${cur.preview.typeId}`}
-                          className="absolute top-0 left-0 w-full h-full"
-                        ></Link>
-                      )}
                       <img
                         src={cur.type[0].img[0].url}
                         alt={`alwaysIconicItems-Img${index}`}
@@ -70,16 +74,16 @@ function AlwaysIconic() {
             {itemData.item[0].items.map((cur, index) => {
               return (
                 <div
-                  className="w-full relative flex flex-col gap-5"
+                  className="w-full relative flex flex-col gap-5 cursor-pointer"
                   key={index}
+                  onClick={() => {
+                    dispatch(setLoadingState());
+                    dispatch(setOpenToogle(""));
+                    navigate(
+                      `/productdetail/${cur.preview.catalog}/${cur.id}/${cur.preview.typeId}`
+                    );
+                  }}
                 >
-                  {cur.preview.catalog && cur.preview.typeId && (
-                    <Link
-                      to={`/productdetail/${cur.preview.catalog}/${cur.id}/${cur.preview.typeId}`}
-                      className="absolute top-0 left-0 w-full h-full"
-                    ></Link>
-                  )}
-
                   <img
                     src={cur.type[0].img[0].url}
                     alt={`popularItem2-Img${index}`}

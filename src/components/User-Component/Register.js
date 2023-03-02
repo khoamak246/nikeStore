@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { db } from "../../Firebase/Config";
-import { async } from "@firebase/util";
 import {
   collection,
   doc,
@@ -114,21 +113,57 @@ export default function Register() {
         duration: 1500,
       });
     }
-
+    let mailConditionApi;
     const docEmail = query(
       collection(db, "user"),
       where("email", "==", userData.email)
     );
     const docEmailSnap = await getDocs(docEmail);
-    docEmailSnap.forEach(() => {
-      return toast.error("OOP! This email authorized before", {
+    docEmailSnap.forEach((val) => {
+      mailConditionApi = val.data();
+    });
+    if (mailConditionApi) {
+      return toast.error("OOP! This email authorized before!", {
         duration: 1500,
       });
-    });
-    toast.success("Registed successfully", { duration: 1500 });
-    setDoc(doc(db, "user", registerValue.username.value), userData);
-    return navigate("/login");
+    } else {
+      toast.success("Registed successfully", { duration: 1500 });
+      setDoc(doc(db, "user", registerValue.username.value), userData);
+      return navigate("/login");
+    }
   };
+
+  useEffect(() => {
+    if (registerValue.password.value) {
+      if (
+        registerValue.password.value !== registerValue.confirmPassword.value
+      ) {
+        setRegisterValue({
+          ...registerValue,
+          confirmPassword: {
+            ...registerValue.confirmPassword,
+            state: false,
+          },
+        });
+      } else {
+        setRegisterValue({
+          ...registerValue,
+          confirmPassword: {
+            ...registerValue.confirmPassword,
+            state: true,
+          },
+        });
+      }
+    } else {
+      setRegisterValue({
+        ...registerValue,
+        confirmPassword: {
+          ...registerValue.confirmPassword,
+          state: false,
+        },
+      });
+    }
+  }, [registerValue.password.value]);
 
   useEffect(() => {
     const setTimer = setTimeout(() => {

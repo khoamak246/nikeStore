@@ -13,12 +13,15 @@ import {
   pageDataSelector,
 } from "../redux/selectors/Selectors";
 import { pageFetchConditon } from "../Thunk/pageSlice";
+import { memo } from "react";
+import { setOpenToogle } from "../redux/reducers/ToogleSlice";
 
-export default function ProductDetail() {
+function ProductDetail() {
   const param = useParams();
   const [productInfo, setProductInfo] = useState();
   const dispatch = useDispatch();
   const pageData = useSelector(pageDataSelector);
+  const [product] = pageData;
   const isLoading = useSelector(pageDataLoadingState);
   useEffect(() => {
     if (param.catalogName) {
@@ -31,10 +34,8 @@ export default function ProductDetail() {
     }
   }, [param]);
 
-  const [product] = pageData;
-
   useEffect(() => {
-    let getProductInfo;
+    let getProductInfo = productInfo;
     if (isLoading == "completed") {
       product?.items?.forEach((val) => {
         if (val.id == param.productId) {
@@ -86,3 +87,4 @@ export default function ProductDetail() {
     </>
   );
 }
+export default memo(ProductDetail);

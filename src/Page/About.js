@@ -4,8 +4,10 @@ import ImpactStories from "../components/About-Component/ImpactStories";
 import { useDispatch, useSelector } from "react-redux";
 import { pageDataSelector } from "../redux/selectors/Selectors";
 import { pageFetch } from "../Thunk/pageSlice";
+import { useParams } from "react-router-dom";
 
 export default function About() {
+  const param = useParams();
   const [scroll, setScroll] = useState(false);
   const [scale, setScale] = useState(false);
   const [displayImpactStories, setDisplayImpactStories] = useState();
@@ -13,7 +15,7 @@ export default function About() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(pageFetch("aboutPage"));
-  }, []);
+  }, [param]);
 
   const dataPage = useSelector(pageDataSelector);
   const [impactStories, storiesList] = dataPage;

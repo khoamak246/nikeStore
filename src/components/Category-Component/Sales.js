@@ -1,9 +1,12 @@
 import { ShoppingBagIcon, StarIcon } from "@heroicons/react/24/solid";
-import { HeartIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLoadingState } from "../../redux/reducers/PageSlice";
+import { setOpenToogle } from "../../redux/reducers/ToogleSlice";
 
 export default function Sales({ endpoint }) {
+  const dispatch = useDispatch();
   const { title, items } = endpoint;
   const navigate = useNavigate();
   return (
@@ -51,6 +54,8 @@ export default function Sales({ endpoint }) {
                       type="button"
                       className="bg-white/90 blur-effect-theme button-theme p-0.5 shadow shadow-sky-200"
                       onClick={() => {
+                        dispatch(setLoadingState());
+                        dispatch(setOpenToogle(""));
                         navigate(
                           `/productdetail/${item.preview.catalog}/${item.preview.productId}/${item.preview.typeId}`
                         );
@@ -62,6 +67,8 @@ export default function Sales({ endpoint }) {
                       type="button"
                       className="bg-white/90 blur-effect-theme button-theme px-2 py-1 shadow shadow-sky-200 text-sm text-black "
                       onClick={() => {
+                        dispatch(setLoadingState());
+                        dispatch(setOpenToogle(""));
                         navigate(
                           `/productdetail/${item.preview.catalog}/${item.preview.productId}/${item.preview.typeId}`
                         );
@@ -77,6 +84,8 @@ export default function Sales({ endpoint }) {
                     alt={`img/item-img/${item.id}`}
                     className={`transitions-theme hover:-rotate-12 h-auto w-64 lg:w-56 md:w-48 -rotate-[35deg]`}
                     onClick={() => {
+                      dispatch(setLoadingState());
+                      dispatch(setOpenToogle(""));
                       navigate(
                         `/productdetail/${item.preview.catalog}/${item.preview.productId}/${item.preview.typeId}`
                       );
